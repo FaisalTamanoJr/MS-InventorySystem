@@ -30,4 +30,4 @@ def index():
 
 @app.route('/login')
 def login():
-    print("login")
+    return "Login"
