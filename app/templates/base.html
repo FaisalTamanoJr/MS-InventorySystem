@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - MS-InventorySystem</title>
+        {% else %}
+        <title>MS-InventorySystem</title>
+        {% endif %}
+    </head>
+    <body>
+        <div><a href="/">Home</a><a href="/login">Login</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>

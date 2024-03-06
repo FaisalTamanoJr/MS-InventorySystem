@@ -1,0 +1,1 @@
+FLASK_APP=ms_inventory_system.py
