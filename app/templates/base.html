@@ -8,8 +8,45 @@
         {% endif %}
     </head>
     <body>
-        <div><a href="/">Home</a><a href="/login">Login</a></div>
+        {% if user.role == "employee" %}
+        <div><b>Employee: {{ user.fullname }}</b></div>
+        {% else %}
+        <div><b>Admin: {{ user.fullname }}</b></div>
+        {% endif %}
+        <div>
+            <b>Sales</b>
+            <ul>
+                <li><a href="{{ url_for('sales_register') }}">Register</a></li>
+                <li><a href="{{ url_for('sales_report') }}">Sales Report</a></li>
+                <li><a href="{{ url_for('sales_trends') }}">Trends</a></li>
+            </ul>
+        </div>
+        <div>
+            <b>Inventory</b>
+            <ul>
+                <li><a href="{{ url_for('inventory') }}">Overall Inventory</a></li>
+                <li><a href="{{ url_for('inventory_daily_report') }}">Daily Inventory Report</a></li>
+            </ul>
+        </div>
+        <div>
+            <b>Manage Accounts</b>
+            <ul>
+                <li><a href="{{ url_for('accounts') }}">All Accounts</a></li>
+                <li><a href="{{ url_for('accounts_employee') }}">Employees</a></li>
+                <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
+            </ul>
+        </div>
+        <a href="{{ url_for('login') }}">Sign out</a>
         <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         {% block content %}{% endblock %}
     </body>
 </html>

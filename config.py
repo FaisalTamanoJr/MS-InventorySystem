@@ -1,0 +1,7 @@
+""" This module is used for defining configuration settings"""
+
+import os
+
+
+class Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'secret'
