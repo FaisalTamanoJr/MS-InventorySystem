@@ -1,4 +1,4 @@
-"""This module returns the appropriate webpage given a request/URL"""
+"""This module returns the appropriate webpage given a request/URL."""
 
 from flask import render_template, flash, redirect, url_for
 from app import app  # Import the app variable from the app package.

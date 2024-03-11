@@ -1,4 +1,4 @@
-"""This module will store all web form classes found in the webapp"""
+"""This module will store all web form classes found in the webapp."""
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
