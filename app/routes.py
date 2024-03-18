@@ -69,3 +69,7 @@ def accounts_employee():
 @app.route('/accounts/admin')
 def accounts_admin():
     return render_template('accounts_admin.html', title='Admins', user=user)
+
+@app.route('/register_admin')
+def register_admin():
+    return render_template('register_admin.html', title='Admin Registration')
