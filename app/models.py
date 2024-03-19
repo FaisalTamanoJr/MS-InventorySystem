@@ -6,7 +6,7 @@ import sqlalchemy as sa  # For the database functions.
 import sqlalchemy.orm as so  # Provides support for models.
 from app import db, login
 from datetime import datetime, timezone
-from werkzeug import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
@@ -22,7 +22,7 @@ class Role(db.Model):
         return '<Role {}>'.format(self.name)
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     fullname: so.Mapped[str] = so.mapped_column(sa.String(255), index=True)
     phone: so.Mapped[str] = so.mapped_column(sa.String(11), unique=True)
@@ -49,8 +49,9 @@ class User(db.Model):
 
 
 # UserMixin includes safe implementations of the four requirements for flask-login to function
-class Login(UserMixin, db.Model):
-    username: so.Mapped[str] = so.mapped_column(sa.String(255), index=True, unique=True, primary_key=True)
+class Login(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    username: so.Mapped[str] = so.mapped_column(sa.String(255), index=True, unique=True)
     password_hash: so.Mapped[str] = so.mapped_column(sa.String(255))
 
     # Links to the user table.
@@ -66,6 +67,7 @@ class Login(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
 class TransactionType(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -171,4 +173,4 @@ class Order(db.Model):
 # This function will allow the Flask-login extension to load a user
 @login.user_loader
 def load_user(id):
-    return db.session.get(Login.user, int(id))
+    return db.session.get(User, int(id))

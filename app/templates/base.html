@@ -8,10 +8,10 @@
         {% endif %}
     </head>
     <body>
-        {% if user.role == "employee" %}
-        <div><b>Employee: {{ user.fullname }}</b></div>
+        {% if current_user.role.name == "employee" %}
+        <div><b>Employee: {{ current_user.fullname }}</b></div>
         {% else %}
-        <div><b>Admin: {{ user.fullname }}</b></div>
+        <div><b>Admin: {{ current_user.fullname }}</b></div>
         {% endif %}
         <div>
             <b>Sales</b>
@@ -36,7 +36,13 @@
                 <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
             </ul>
         </div>
-        <a href="{{ url_for('login') }}">Sign out</a>
+        <div>
+            {% if current_user.is_anonymous %}
+            <b><a href="{{ url_for('login') }}">Sign in</a></b>
+            {% else %}
+            <b><a href="{{ url_for('logout') }}">Sign out</a></b>
+            {% endif %}
+        </div>
         <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
