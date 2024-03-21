@@ -50,8 +50,7 @@ class User(UserMixin, db.Model):
 
 # UserMixin includes safe implementations of the four requirements for flask-login to function
 class Login(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    username: so.Mapped[str] = so.mapped_column(sa.String(255), index=True, unique=True)
+    username: so.Mapped[str] = so.mapped_column(sa.String(255), index=True, unique=True, primary_key=True)
     password_hash: so.Mapped[str] = so.mapped_column(sa.String(255))
 
     # Links to the user table.

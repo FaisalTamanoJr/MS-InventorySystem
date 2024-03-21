@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 7dfa2c53594f
+Revision ID: 78de0b68e6a4
 Revises: 
-Create Date: 2024-03-19 16:29:22.264948
+Create Date: 2024-03-21 08:27:24.406307
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7dfa2c53594f'
+revision = '78de0b68e6a4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -55,12 +55,11 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_user_role_id'), ['role_id'], unique=False)
 
     op.create_table('login',
-    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=255), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('username')
     )
     with op.batch_alter_table('login', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_login_user_id'), ['user_id'], unique=False)
