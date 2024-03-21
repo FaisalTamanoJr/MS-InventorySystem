@@ -27,9 +27,8 @@ def login():
     if form.validate_on_submit():  # If browser receives a POST request
 
         # Verify and sign in the user based on the provided data in the forms
-        user = db.session.scalar(sa.select(User).where(User.login.has(Login.username == form.username.data)))  # Find provided
-        # username in the database
-        print(user)
+        user = db.session.scalar(sa.select(User).where(User.login.has(Login.username == form.username.data)))  # Find
+        # provided username in the database
         if user is None or not user.login.check_password(
                 form.password.data):  # If user doesn't exist or password is wrong.
             flash('Enter a valid username or password')
