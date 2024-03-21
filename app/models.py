@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
     fullname: so.Mapped[str] = so.mapped_column(sa.String(255), index=True)
     phone: so.Mapped[str] = so.mapped_column(sa.String(11), unique=True)
     email: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), unique=True)
-    birthday: so.Mapped[Optional[datetime]] = so.mapped_column(sa.Date)
+    birthday: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime)
     date_created: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
 
     # Links to the login table.

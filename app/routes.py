@@ -2,17 +2,20 @@
 
 from flask import render_template, flash, redirect, url_for, request
 from app import app  # Import the app variable from the app package.
-from app.forms import LoginForm
+from app.forms import LoginForm, AdminRegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app import db
-from app.models import User, Login
+from app.models import User, Login, Role
 from urllib.parse import urlsplit
+
 
 # The decorators, or the code that starts with "@", are used for linking the URL given as an argument, and the function.
 @app.route('/')
 @login_required
 def index():
+    if db.session.scalars(sa.select(User)).first() is None:  # If there are no existing users, redirect to admin registration page.
+        return redirect(url_for('register_admin'))
     if current_user.role.name == 'employee':
         return redirect(url_for('sales_register'))
     elif current_user.role.name == 'admin':
@@ -21,6 +24,8 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if db.session.scalars(sa.select(User)).first() is None:  # If there are no existing users, redirect to admin registration page.
+        return redirect(url_for('register_admin'))
     if current_user.is_authenticated:  # Redirect to index if user is signed in already
         return redirect(url_for('index'))
     form = LoginForm()
@@ -35,10 +40,10 @@ def login():
             return redirect(url_for('login'))
         login_user(user, remember=True)
 
-        # Redirects to the next page. If a user opens a @loginrequired page but was not signed in, it redirects back
+        # Redirects to the next page. If a user opens a @login_required page but was not signed in, it redirects back
         # to that page after signing in.
         next_page = request.args.get('next')
-        if not next_page or urlsplit(next_page).netloc != '': # The urlsplit is for determining whether the next
+        if not next_page or urlsplit(next_page).netloc != '':  # The urlsplit is for determining whether the next
             # page url is a relative or absolute path (for security purposes)
             next_page = url_for('index')
         return redirect(next_page)
@@ -91,6 +96,13 @@ def inventory_daily_report():
 def accounts():
     return render_template('accounts.html', title='Accounts')
 
+@app.route('/accounts/create-an-account')
+@login_required
+def create_an_account():
+    if current_user.role.name != 'admin':
+        redirect(url_for('index'))
+    return render_template('create_an_account.html', title='Create an Account')
+
 
 @app.route('/accounts/employee')
 @login_required
@@ -104,6 +116,34 @@ def accounts_admin():
     return render_template('accounts_admin.html', title='Admins')
 
 
-@app.route('/register_admin')
+@app.route('/register_admin', methods=['GET', 'POST'])
 def register_admin():
-    return render_template('register_admin.html', title='Admin Registration')
+    form = AdminRegistrationForm()
+
+    # If browser receives a POST request
+    if form.validate_on_submit():
+
+        # Register the user given the input provided and if it is valid.
+        role = Role(name='admin')
+        user = User(fullname=form.fullname.data, phone=form.phone.data, email=form.email.data,
+                    birthday=form.birthday.data, role=role)
+        account_login = Login(username=form.username.data, user=user)
+        account_login.set_password(form.password.data)
+        db.session.add(role)
+        db.session.add(user)
+        db.session.add(account_login)
+        db.session.commit()
+        flash('Admin Account has been Created.')
+
+        # Create the employee role in the database
+        role = Role(name='employee')
+        db.session.add(role)
+        db.session.commit()
+
+        return redirect(url_for('login'))
+
+    # If a single user or more exist in the database, prevent them from accessing this page.
+    if db.session.scalars(sa.select(User)).first() is not None:
+        return redirect(url_for('index'))
+
+    return render_template('register_admin.html', title='Admin Registration', form=form)

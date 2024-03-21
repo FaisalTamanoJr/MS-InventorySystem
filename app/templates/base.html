@@ -34,6 +34,9 @@
                 <li><a href="{{ url_for('accounts') }}">All Accounts</a></li>
                 <li><a href="{{ url_for('accounts_employee') }}">Employees</a></li>
                 <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
+                {% if current_user.role.name == "admin" %}
+                    <li><a href="{{ url_for('create_an_account') }}">Create an Account</a></li>
+                {% endif %}
             </ul>
         </div>
         <div>
