@@ -150,6 +150,10 @@ class Stock(db.Model):
     def __repr__(self):
         return '<Stock {}>'.format(self.id)
 
+    def edit_quantity(self, quantity):
+        self.quantity = quantity
+        self.last_updated = lambda: datetime.now(timezone.utc)
+
 
 class Order(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)

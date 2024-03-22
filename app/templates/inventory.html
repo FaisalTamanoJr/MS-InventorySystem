@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>TODO</p>
+<div>
+    <ul>
+        <li><a href="{{ url_for('add_a_product') }}">Add a Product</a></li>
+        <li><a href="{{ url_for('add_a_product_type') }}">Add a Product Type</a></li>
+    </ul>
+</div>
 {% endblock %}

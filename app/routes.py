@@ -2,11 +2,11 @@
 
 from flask import render_template, flash, redirect, url_for, request
 from app import app  # Import the app variable from the app package.
-from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm
+from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app import db
-from app.models import User, Login, Role
+from app.models import User, Login, Role, ProductType, Product, Stock
 from urllib.parse import urlsplit
 
 
@@ -61,7 +61,7 @@ def logout():
 
 
 # Sales
-@app.route('/sales/register')
+@app.route('/sales/register', methods=['GET', 'POST'])
 @login_required
 def sales_register():
     return render_template('sales_register.html', title='Sales Register')
@@ -84,6 +84,53 @@ def sales_trends():
 @login_required
 def inventory():
     return render_template('inventory.html', title='Overall Inventory')
+
+
+@app.route('/inventory/add-a-product', methods=['GET', 'POST'])
+@login_required
+def add_a_product():
+    # Ensure the one creating an account is an admin, else redirect them to index
+    if current_user.role.name != 'admin':
+        return redirect(url_for('inventory'))
+
+    form = AddProductForm()
+
+    # If browser receives a POST request
+    if form.validate_on_submit():
+        # Add the product given the input provided and if it is valid.
+        product_type = db.session.scalar(sa.select(ProductType).where(ProductType.name == form.type.data))
+        product = Product(name=form.name.data, price=form.price.data, product_type=product_type, user=current_user)
+        stock = Stock(quantity=form.stock.data, product=product)
+        db.session.add(product)
+        db.session.add(stock)
+        db.session.commit()
+        flash('Product has been Added')
+
+        return redirect(url_for('inventory'))
+
+    return render_template('inventory_add_a_product.html', title='Add a Product', form=form)
+
+
+@app.route('/inventory/add-a-product-type', methods=['GET', 'POST'])
+@login_required
+def add_a_product_type():
+    # Ensure the one creating an account is an admin, else redirect them to index
+    if current_user.role.name != 'admin':
+        return redirect(url_for('inventory'))
+
+    form = AddProductTypeForm()
+
+    # If browser receives a POST request
+    if form.validate_on_submit():
+        # Add the product given the input provided and if it is valid.
+        product_type = ProductType(name=form.name.data)
+        db.session.add(product_type)
+        db.session.commit()
+        flash('Product Type has been Added')
+
+        return redirect(url_for('inventory'))
+
+    return render_template('inventory_add_a_product_type.html', title='Add a Product Type', form=form)
 
 
 @app.route('/inventory/daily-report')

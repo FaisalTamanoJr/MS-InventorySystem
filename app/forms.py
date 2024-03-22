@@ -2,10 +2,10 @@
 
 import sqlalchemy as sa
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, DecimalField, IntegerField
 from wtforms.validators import DataRequired, Optional, Email, Length, ValidationError
 from app import db
-from app.models import Role, User, Login
+from app.models import Role, User, Login, ProductType
 
 
 class LoginForm(FlaskForm):
@@ -33,7 +33,7 @@ class AccountCreationForm(FlaskForm):
                        choices=lambda: db.session.scalars(sa.select(Role.name)).all())
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Sign Up')
+    submit = SubmitField('Create Account')
 
     def validate_username(self, username):
         user_username = db.session.scalar(sa.select(Login).where(Login.username == username.data))
@@ -51,3 +51,17 @@ class AccountCreationForm(FlaskForm):
             User.email == email.data))
         if user_email is not None:
             raise ValidationError('Please use a different email address.')
+
+
+class AddProductForm(FlaskForm):
+    name = StringField('Product Name', validators=[DataRequired()])
+    type = SelectField('Product Type', validators=[DataRequired()],
+                       choices=lambda: db.session.scalars(sa.select(ProductType.name)).all())
+    price = DecimalField('Price', validators=[DataRequired()])
+    stock = IntegerField('Stock', validators=[DataRequired()])
+    submit = SubmitField('Add Product')
+
+
+class AddProductTypeForm(FlaskForm):
+    name = StringField('Product Type Name', validators=[DataRequired()])
+    submit = SubmitField('Add Product Type')
