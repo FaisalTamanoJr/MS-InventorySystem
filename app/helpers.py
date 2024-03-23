@@ -1,3 +1,16 @@
-def convert_to_datetime(date): # Converts dates with the format "Year-Month-Day" to "Year,Month,Day"
-    split_date = date.split("-")
-    return "{year}, {month}, {day}".format(year=split_date[0], month=split_date[1], day=split_date[2])
+from app.models import Product
+
+
+def create_order_dictionary(product, quantity):  # Adds an order to a dictionary
+    order = {
+        "product": product,
+        "quantity": quantity,
+        "total_price": product.price * quantity
+    }
+    return order
+
+
+def delete_item_at_indices(given_list, indices):
+    for index in indices:
+        given_list.pop(index)
+    return given_list

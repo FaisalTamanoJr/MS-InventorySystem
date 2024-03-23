@@ -1,5 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>TODO</p>
+<h1>Order</h1>
+<form action="" method="post" novalidate>
+    {{ order_form.hidden_tag() }}
+    <p>
+        {{ order_form.product.label }}<br>
+        {{ order_form.product }}<br>
+        {% for error in order_form.product.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ order_form.quantity.label }}<br>
+        {{ order_form.quantity }}<br>
+        {% for error in order_form.quantity.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ order_form.submit }}</p>
+</form>
+<h1>Transaction</h1>
+<form action="" method="post" novalidate>
+    {{ transaction_form.hidden_tag() }}
+    <p>
+        {{ transaction_form.payment_method.label }}
+        {{ transaction_form.payment_method }}<br>
+        {% for error in transaction_form.payment_method.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ transaction_form.discount.label }}
+        {{ transaction_form.discount }}<br>
+        {% for error in transaction_form.discount.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ transaction_form.order_checkbox_field }}
+    </p>
+    <p>{{ transaction_form.remove_items_submit }}</p>
+    <p>{{ transaction_form.process_submit }}</p>
+</form>
 {% endblock %}
