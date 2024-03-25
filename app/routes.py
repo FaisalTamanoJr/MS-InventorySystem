@@ -1,19 +1,16 @@
 """This module returns the appropriate webpage given a request/URL."""
 
 from flask import render_template, flash, redirect, url_for, request
+from werkzeug.datastructures import MultiDict
+
 from app import app  # Import the app variable from the app package.
-from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm, AddOrderForm, TransactionForm
+from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app import db
 from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType
-from app.helpers import create_order_dictionary
 from urllib.parse import urlsplit
 
-
-# Global variables
-orders = [] # temporary list of orders (for unprocessed transaction)
-discount_percentage = 0.2
 
 # The decorators, or the code that starts with "@", are used for linking the URL given as an argument, and the function.
 @app.route('/')
@@ -69,21 +66,10 @@ def logout():
 @app.route('/sales/register', methods=['GET', 'POST'])
 @login_required
 def sales_register():
-    order_form = AddOrderForm()
-    transaction_form = TransactionForm()
-
-    # if order validation submit
-    if order_form.validate_on_submit():
-        order_product = db.session.scalar(sa.select(Product).where(Product.name == order_form.product.data))
-        order = create_order_dictionary(order_product, order_form.quantity.data)
-        orders.append(order)
-        redirect(url_for('sales_register'))
-
-    transaction_form.set_order_checkbox_items(orders)
-    # if transaction removal validation submit
-    # if transaction process submit
-    # show table of processed transactions
-    return render_template('sales_register.html', title='Sales Register', order_form=order_form, transaction_form=transaction_form)
+    products = db.session.scalars(sa.select(Product)).all()
+    payment_methods = db.session.scalars(sa.select(TransactionType)).all()
+    discount_percentage = 0.2
+    return render_template('sales_register.html', title='Sales Register', products=products, payment_methods=payment_methods, discount=discount_percentage)
 
 
 @app.route('/sales/report')

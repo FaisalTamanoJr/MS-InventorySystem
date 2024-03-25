@@ -1,9 +1,11 @@
 """This module will store all web form classes found in the webapp."""
 
 import sqlalchemy as sa
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, DecimalField, IntegerField, SelectMultipleField, widgets, BooleanField
+from flask_wtf import Form, FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, DecimalField, IntegerField, \
+    BooleanField, FieldList, FormField
 from wtforms.validators import DataRequired, Optional, Email, Length, ValidationError
+
 from app import db
 from app.models import Role, User, Login, ProductType, Product, TransactionType
 
@@ -64,28 +66,3 @@ class AddProductForm(FlaskForm):
 class AddProductTypeForm(FlaskForm):
     name = StringField('Product Type Name', validators=[DataRequired()])
     submit = SubmitField('Add Product Type')
-
-
-class AddOrderForm(FlaskForm):
-    product = SelectField('Product', validators=[DataRequired()],
-                          choices=lambda: db.session.scalars(sa.select(Product.name)).all())
-    quantity = IntegerField('Quantity', validators=[DataRequired()])
-    submit = SubmitField('+')
-
-
-class MultiCheckboxField(SelectMultipleField):
-    widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()
-
-
-class TransactionForm(FlaskForm):
-    payment_method = SelectField('Mode of Payment: ', validators=[DataRequired()],
-                       choices=lambda: db.session.scalars(sa.select(TransactionType.name)).all())
-    discount = BooleanField('PWD/Senior Discount? ')
-    order_checkbox_field = MultiCheckboxField('Orders')
-    remove_items_submit = SubmitField('Remove Order(s)')
-    process_submit = SubmitField('Process')
-
-    def set_order_checkbox_items(self, orders):
-        list_of_orders = [(orders.index(order), order["product"].name) for order in orders]
-        self.order_checkbox_field.choices = list_of_orders

@@ -1,46 +1,121 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<style>
+    .hidden {
+    display:none;
+    }
+</style>
+
 <h1>Order</h1>
-<form action="" method="post" novalidate>
-    {{ order_form.hidden_tag() }}
-    <p>
-        {{ order_form.product.label }}<br>
-        {{ order_form.product }}<br>
-        {% for error in order_form.product.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ order_form.quantity.label }}<br>
-        {{ order_form.quantity }}<br>
-        {% for error in order_form.quantity.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ order_form.submit }}</p>
-</form>
+
+<select id="order-product">
+    <option data-price=""></option>
+    {% for product in products %}
+    <option data-price="{{ product.price }}">{{ product.name }}</option>
+    {% endfor %}
+</select>
+<label>Amount: </label><input type="text" id="order-quantity">
+<button id="add-order">+</button>
+
 <h1>Transaction</h1>
-<form action="" method="post" novalidate>
-    {{ transaction_form.hidden_tag() }}
-    <p>
-        {{ transaction_form.payment_method.label }}
-        {{ transaction_form.payment_method }}<br>
-        {% for error in transaction_form.payment_method.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ transaction_form.discount.label }}
-        {{ transaction_form.discount }}<br>
-        {% for error in transaction_form.discount.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ transaction_form.order_checkbox_field }}
-    </p>
-    <p>{{ transaction_form.remove_items_submit }}</p>
-    <p>{{ transaction_form.process_submit }}</p>
-</form>
+
+<select id="payment-method">
+    {% for payment_method in payment_methods %}
+    <option>{{ payment_method.name }}</option>
+    {% endfor %}
+</select>
+<label>PWD discount</label>
+<input type="checkbox" id="toggle-discount">
+
+    <table>
+        <thead>
+        <tr>
+            <th scope="col">Product</td>
+            <th scope="col">Amount</td>
+            <th scope="col">Price</td>
+            <th scope="col">Delete?</td>
+        </tr>
+        </thead>
+        <tbody id="transactions-table">
+
+        </tbody>
+    </table><br>
+
+<button id="delete-products">Delete</button>
+<button id="process-transactions">Process</button>
+
+<script>
+    var transaction = {'orders': orders, 'payment_method': null, 'discount': null, 'user': {{ current_user.id }}}
+    var orders = []
+
+    $('#toggle-discount').on('change', function(){
+        transaction.discount = $(this).val()
+        console.log(transaction)
+    })
+
+    $('#delete-products').on('click', function(){
+        // TODO
+    })
+
+    $('#process-transactions').on('click', function(){
+        // TODO
+    })
+
+    var newId = 0
+    var order = {'id': newId, 'product': null, 'quantity': null, 'total_price': null, 'price': null}
+
+    $('#order-product').on('change', function(){
+        order.product = $(this).val()
+        order.price = parseFloat($(this).find(':selected').data('price')).toFixed(2)
+        console.log(order)
+    })
+
+    $('#order-quantity').on('change', function(){
+        order.quantity = parseInt($(this).val())
+        console.log(order)
+    })
+
+    $('#add-order').on('click', function(){
+        if(order.product == null){
+            alert('No product selected')
+        }else if (order.quantity == null){
+            alert('Specify an amount')
+        }else if (order.quantity <= 0){
+            alert('Amount must be a whole number')
+        }else{
+            order.total_price = order.price * order.quantity
+            addOrder(order)
+            $('#order-product').val('')
+            $('#order-quantity').val('')
+            order.product = null
+            order.quantity = null
+            order.total_price = null
+            order.price = null
+        }
+    })
+
+    function addOrder(obj){
+        orders.push(obj)
+        newId += 1
+        console.log(orders)
+        var row = `<tr scope="row" class="transaction_table_row-${obj.id}">
+                        <td>${obj.product}</td>
+                        <td id="quantity-${obj.id}">${obj.quantity}</td>
+                        <td id="total-price-${obj.id}">${obj.total_price}</td>
+                        <td >
+                            <input type="checkbox" id="toggle-delete-${obj.id}">
+                        </td>
+                   </tr>`
+        $('#transactions-table').append(row)
+    }
+
+    function changeDeleteStatus(obj){
+        pass
+    }
+
+</script>
 {% endblock %}
