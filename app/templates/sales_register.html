@@ -12,6 +12,7 @@
 
 <h1>Order</h1>
 
+<label>Item: </label>
 <select id="order-product">
     <option data-price=""></option>
     {% for product in products %}
@@ -23,21 +24,30 @@
 
 <h1>Transaction</h1>
 
+<label>Method of Payment</label><br>
 <select id="payment-method">
+    <option></option>
     {% for payment_method in payment_methods %}
     <option>{{ payment_method.name }}</option>
     {% endfor %}
 </select>
-<label>PWD discount</label>
-<input type="checkbox" id="toggle-discount">
+
+<label class="gcash-ref-no hidden"><p>Reference no</p></label>
+<p><input type="text" class="gcash-ref-no hidden"></p>
+
+<label><b>Apply Senior Discount?</b></label><br>
+<label>Senior Citizen Name</label>
+<p><input type="text" id="senior-name"></p>
+<label>ID No.</label>
+<p><input type="text" id="senior-id"></p>
 
     <table>
         <thead>
         <tr>
-            <th scope="col">Product</td>
+            <th scope="col"></td>
+            <th scope="col">Item</td>
+            <th scope="col">No. of Orders</td>
             <th scope="col">Amount</td>
-            <th scope="col">Price</td>
-            <th scope="col">Delete?</td>
         </tr>
         </thead>
         <tbody id="transactions-table">
@@ -48,13 +58,33 @@
 <button id="delete-products">Delete</button>
 <button id="process-transactions">Process</button>
 
+<h1>Processed Transactions</h1>
+<p id="date-and-time"></p>
 <script>
+
+    // Date and time for transactions table.
+
+    var dateAndTimeDisplay = document.getElementById("date-and-time")
+
+    function refreshDateAndTime() {
+        var date = new Date().toDateString("en-US", {timeZone: "Asia/Manila"})
+        var time = new Date().toLocaleTimeString("en-US", {timeZone: "Asia/Manila"})
+        dateAndTimeDisplay.innerHTML = "<b>Date: </b>".concat(date, " <b>Time:</b> ", time);
+    }
+
+    setInterval(refreshDateAndTime, 1000)
+
+    // Transactions and orders
+
     var transaction = {'orders': orders, 'payment_method': null, 'discount': null, 'user': {{ current_user.id }}}
     var orders = []
 
-    $('#toggle-discount').on('change', function(){
-        transaction.discount = $(this).val()
-        console.log(transaction)
+    $('#payment-method').on('change', function(){
+        if ($(this).find(":selected").text() == "GCash"){
+            $('.gcash-ref-no').removeClass('hidden')
+        }else{
+            $('.gcash-ref-no').addClass('hidden')
+        }
     })
 
     $('#delete-products').on('click', function(){
@@ -83,9 +113,9 @@
         if(order.product == null){
             alert('No product selected')
         }else if (order.quantity == null){
-            alert('Specify an amount')
+            alert('Specify an number of orders')
         }else if (order.quantity <= 0){
-            alert('Amount must be a whole number')
+            alert('Must be a whole number')
         }else{
             order.total_price = order.price * order.quantity
             addOrder(order)
@@ -103,12 +133,12 @@
         newId += 1
         console.log(orders)
         var row = `<tr scope="row" class="transaction_table_row-${obj.id}">
-                        <td>${obj.product}</td>
-                        <td id="quantity-${obj.id}">${obj.quantity}</td>
-                        <td id="total-price-${obj.id}">${obj.total_price}</td>
                         <td >
                             <input type="checkbox" id="toggle-delete-${obj.id}">
                         </td>
+                        <td id=order-${obj.id}>${obj.product}</td>
+                        <td id="quantity-${obj.id}">${obj.quantity}</td>
+                        <td id="total-price-${obj.id}">${obj.total_price}</td>
                    </tr>`
         $('#transactions-table').append(row)
     }

@@ -68,7 +68,7 @@ def logout():
 def sales_register():
     products = db.session.scalars(sa.select(Product)).all()
     payment_methods = db.session.scalars(sa.select(TransactionType)).all()
-    discount_percentage = 0.2
+    discount_percentage = 0.1
     return render_template('sales_register.html', title='Sales Register', products=products, payment_methods=payment_methods, discount=discount_percentage)
 
 
