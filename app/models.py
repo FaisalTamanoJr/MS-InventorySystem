@@ -84,6 +84,8 @@ class Transaction(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     total_amount_paid: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL(precision=2))
     transaction_date: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
+    senior_citizen_name: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255))
+    senior_citizen_id: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255))
 
     # Links to the user table.
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
