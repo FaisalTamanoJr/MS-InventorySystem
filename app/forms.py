@@ -16,13 +16,13 @@ class LoginForm(FlaskForm):
 
 
 class AdminRegistrationForm(FlaskForm):
-    fullname = StringField('Full Name', validators=[DataRequired()])
-    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=11, max=11)])
-    email = StringField('Email (Optional)', validators=[Optional(), Email()])
+    fullname = StringField('Full Name', validators=[DataRequired()], render_kw={'placeholder': 'Juan Dela Cruz'})
+    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=11, max=11)], render_kw={'placeholder': '09XXXXXXXXX'})
+    email = StringField('Email (Optional)', validators=[Optional(), Email()], render_kw={'placeholder': 'email@gmail.com'})
     birthday = DateField('Birthday (Optional)', validators=[Optional()])
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired()], render_kw={'placeholder': 'juandelacruz123'})
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Sign Up')
+    submit = SubmitField('Sign Up', id="registerButton")
 
 
 class AccountCreationForm(FlaskForm):
