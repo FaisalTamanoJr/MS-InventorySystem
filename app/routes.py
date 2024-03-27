@@ -1,15 +1,15 @@
 """This module returns the appropriate webpage given a request/URL."""
 
 from flask import render_template, flash, redirect, url_for, request
-from werkzeug.datastructures import MultiDict
-
 from app import app  # Import the app variable from the app package.
 from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app import db
-from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType
+from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType, Transaction, Order
 from urllib.parse import urlsplit
+from dateutil import tz
+from datetime import datetime, timezone
 
 
 # The decorators, or the code that starts with "@", are used for linking the URL given as an argument, and the function.
@@ -63,14 +63,101 @@ def logout():
 
 
 # Sales
-@app.route('/sales/register', methods=['GET', 'POST'])
+@app.route('/sales/register')
 @login_required
 def sales_register():
     products = db.session.scalars(sa.select(Product)).all()
     payment_methods = db.session.scalars(sa.select(TransactionType)).all()
     discount_percentage = 0.1
-    return render_template('sales_register.html', title='Sales Register', products=products, payment_methods=payment_methods, discount=discount_percentage)
 
+    # Get the transactions of current day
+    current_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
+    transactions_today = db.session.scalars(sa.select(Transaction).where(Transaction.transaction_date >= current_datetime))
+    transactions_today_list = []
+    total_paid = 0
+    total_quantity = 0
+    for transaction in transactions_today:
+        # Get transaction time
+        from_zone = tz.tzutc()
+        to_zone = tz.tzlocal()
+        utc = transaction.transaction_date
+        utc = utc.replace(tzinfo=from_zone)
+        transaction_time = utc.astimezone(to_zone)
+        transaction_time = transaction_time.strftime("%H:%M")
+
+        # Get transaction type
+        transaction_type = db.session.scalar(sa.select(TransactionType.name).where(TransactionType.id == transaction.transaction_type_id))
+
+        transaction_dict = {
+            "time" : transaction_time,
+            "orders" : [],
+            "transaction_type" : transaction_type,
+        }
+
+        # Add to total paid
+        total_paid += transaction.total_amount_paid
+
+        # Add the orders to the transaction_dict, in a list and dictionary format
+        orders = db.session.scalars(sa.select(Order).where(Order.transaction == transaction))
+        for order in orders:
+            product = db.session.scalar(sa.select(Product.name).where(Product.id == order.product_id))
+            order_dict = {
+                "product": product,
+                "quantity": order.quantity,
+                "total_price": round(order.total_price,2) }
+            transaction_dict["orders"].append(order_dict)
+
+            # Add to total quantity
+            total_quantity += order.quantity
+
+        transactions_today_list.append(transaction_dict)
+
+    return render_template('sales_register.html', title='Sales Register', products=products,
+                           payment_methods=payment_methods, discount=discount_percentage,
+                           processed_transactions=transactions_today_list, total_paid=round(total_paid, 2),
+                           total_quantity=total_quantity)
+
+
+@app.route('/sales/register/process-transaction', methods=['POST'])
+@login_required
+def process_transaction():
+    transaction_received = request.get_json(force=True)
+    if transaction_received:
+        # Transaction
+        transaction_type = db.session.scalar(sa.select(TransactionType).where(TransactionType.name == transaction_received["transaction_type"]))
+        transaction = Transaction(
+            total_amount_paid = transaction_received['total_amount_paid'],
+            senior_citizen_name = transaction_received['senior_citizen_name'],
+            senior_citizen_id = transaction_received['senior_citizen_id'],
+            gcash_ref_no = transaction_received['gcash_ref_no'],
+            user = current_user,
+            transaction_type = transaction_type
+        )
+        db.session.add(transaction)
+
+        # Orders
+        orders = transaction_received['orders']
+        for o in orders:
+            product = db.session.scalar(sa.select(Product).where(Product.name == o['product']))
+            stock = db.session.scalar(sa.select(Stock).where(Stock.product_id == product.id))
+            stock.quantity -= o['quantity']
+            stock.last_updated = datetime.now(timezone.utc)
+
+            if stock.quantity < 0:
+                return product.name
+
+            order = Order(
+                quantity = o['quantity'],
+                total_price = o['total_price'],
+                transaction = transaction,
+                product = product
+            )
+            db.session.add(order)
+
+        # Submit to the database
+        db.session.commit()
+        flash('Transaction processed')
+        return "success"
 
 @app.route('/sales/report')
 @login_required

@@ -6,7 +6,21 @@
 
 <style>
     .hidden {
-    display:none;
+        display:none;
+    }
+    #p_transactions_table {
+        width: 100%;
+    }
+    tbody.p_transactions td, thead.p_transactions th {
+        width: 20%;
+    }
+    .p_transactions {
+        display: block;
+    }
+    #p_transactions_body {
+        height: 100px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 </style>
 
@@ -66,9 +80,9 @@
 
 <h1>Processed Transactions</h1>
 <p id="date-and-time"></p>
-<table>
-    <thead>
-    <tr>
+<table id="p_transactions_table">
+    <thead class="p_transactions">
+    <tr class="p_transactions">
         <th scope="col">Time</td>
         <th scope="col">Item</td>
         <th scope="col">MOP</td>
@@ -76,21 +90,43 @@
         <th scope="col">Amount</td>
     </tr>
     </thead>
-    <tbody>
+    <tbody class="p_transactions" id="p_transactions_body">
+        {% for transaction in processed_transactions %}
+            {% for order in transaction.orders %}
+            <tr>
+                <td>{{ transaction.time }}</td>
+                <td>{{ order.product }}</td>
+                <td>{{ transaction.transaction_type }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.total_price }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td><b>TOTAL = </b></td>
+            <td>{{ total_quantity }}</td>
+            <td>{{ total_paid }}</td>
+        </tr>
     </tbody>
-    <tr>
-        <td></td>
-        <td></td>
-        <td><b>TOTAL = </b></td>
-        <td></td>
-        <td></td>
-    </tr>
 </table>
 
 <script>
+    // Processed transactions table design and table design
+    var $table = $('#p_transactions_table'),
+    $bodyCells = $table.find('tbody.p_transactions tr:first').children(),
+    colWidth
+
+    colWidth = $bodyCells.map(function() {
+        return $(this).width()
+    }).get()
+
+    $table.find('thead tr').children().each(function(i, v) {
+        $(v).width(colWidth[i])
+    })
 
     // Date and time for transactions table.
-
     var dateAndTimeDisplay = document.getElementById("date-and-time")
 
     function refreshDateAndTime() {
@@ -193,103 +229,118 @@
         }
 
         var transaction = {}
-        if (senior_discount_details){
+
+        // Create the data that we will send to the python backend for processing.
+        if (senior_discount_details){ // If senior discount was applied
             let discounted_price = total_amount - (total_amount * {{ discount }})
             transaction = {
                 "total_amount_paid" : discounted_price,
-                "transaction_date" : Date.now(), // Unix time
                 "senior_citizen_name" : senior_discount_details.senior_name,
                 "senior_citizen_id" : senior_discount_details.senior_id,
                 "gcash_ref_no" : gcash_reference_no,
-                "user" : {{ current_user.id }}, // User id
                 "transaction_type" : t_type,
                 "orders" : orders
             }
         } else {
             transaction = {
                 "total_amount_paid" : total_amount,
-                "transaction_date" : Date.now(), // Unix time
                 "senior_citizen_name" : null,
                 "senior_citizen_id" : null,
                 "gcash_ref_no" : gcash_reference_no,
-                "user" : {{ current_user.id }}, // User id
                 "transaction_type" : t_type,
                 "orders" : orders
             }
         }
-        console.log(transaction)
 
-        // Reset everything
-        orders = []
-        $('#transactions-table').empty()
-        $('#payment-method').val('')
-        $('#gcash-ref-no').val('')
-        $('#senior-name').val('')
-        $('#senior-id').val('')
-        compute_total()
+        // Send the transaction to the python backend
+        var xml = new XMLHttpRequest()
+        xml.open("POST","{{ url_for('process_transaction') }}", true)
+        xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xml.send(JSON.stringify(transaction))
+
+        // if not enough stocks, alert the user and prevent the transaction from processing
+        xml.onload = function(){
+            if (this.responseText == "success"){
+                // Reset everything
+                orders = []
+                $('#transactions-table').empty()
+                $('#payment-method').val('')
+                $('#gcash-ref-no').val('')
+                $('#senior-name').val('')
+                $('#senior-id').val('')
+
+                compute_total()
+
+                // Refresh page
+                location.reload()
+            }else{
+                error_message = "Not enough ".concat(this.responseText, " stocks.")
+                alert(error_message)
+            }
+        }
     }
 
     function compute_total(){
-    var total_quantity = 0
-    var total_amount = 0
+        var total_quantity = 0
+        var total_amount = 0
 
-    // Compute for the total price and quantity
-    for (let i = 0; i < orders.length; i++){
-    total_quantity += orders[i].quantity
-    total_amount += orders[i].total_price
-    }
+        // Compute for the total price and quantity
+        for (let i = 0; i < orders.length; i++){
+            total_quantity += orders[i].quantity
+            total_amount += orders[i].total_price
+        }
 
-    // If discount:
-    var no_senior_name = ($('#senior-name').val() == "")
-    var no_senior_id = ($('#senior-id').val() == "")
-    if (!no_senior_name && !no_senior_id){
+        // If discount:
+        var no_senior_name = ($('#senior-name').val() == "")
+        var no_senior_id = ($('#senior-id').val() == "")
+        if (!no_senior_name && !no_senior_id){
+            document.getElementById('total-quantity').innerHTML = total_quantity
+            let discounted_price = total_amount - (total_amount * {{ discount }})
+            document.getElementById('total-amount').innerHTML = "".concat(discounted_price, " ({{ discount }} Discount)")
+            return
+        }
+
         document.getElementById('total-quantity').innerHTML = total_quantity
-        let discounted_price = total_amount - (total_amount * {{ discount }})
-        document.getElementById('total-amount').innerHTML = "".concat(discounted_price, " ({{ discount }} Discount)")
-        return
-    }
-
-    document.getElementById('total-quantity').innerHTML = total_quantity
-    document.getElementById('total-amount').innerHTML = total_amount
+        document.getElementById('total-amount').innerHTML = total_amount
     }
 
     var newId = 0
     var order = {'id': newId, 'product': null, 'quantity': null, 'total_price': null, 'price': null}
 
     $('#order-product').on('change', function(){
-    order.product = $(this).val()
-    order.price = parseFloat($(this).find(':selected').data('price')).toFixed(2)
+        order.product = $(this).val()
+        order.price = parseFloat($(this).find(':selected').data('price')).toFixed(2)
     })
 
     $('#order-quantity').on('change', function(){
-    order.quantity = parseInt($(this).val())
+        order.quantity = parseInt($(this).val())
     })
 
     $('#add-order').on('click', function(){
-    if(order.product == null){
-    alert('No product selected.')
-    }else if (order.quantity == null){
-    alert('Specify an number of orders.')
-    }else if (order.quantity <= 0){
-    alert('Must be a whole number.')
-    }else{
-    order.total_price = order.price * order.quantity
-    addOrder(order)
-    $('#order-product').val('')
-    $('#order-quantity').val('')
-    order.id = newId
-    order.product = null
-    order.quantity = null
-    order.total_price = null
-    order.price = null
-    }
-    compute_total()
+        if(order.product == null){
+            alert('No product selected.')
+        }else if (order.quantity == null){
+            alert('Specify an number of orders.')
+        }else if (order.quantity <= 0){
+            alert('Must be a whole number.')
+        }else{
+            order.total_price = order.price * order.quantity
+            addOrder(order)
+            $('#order-product').val('')
+            $('#order-quantity').val('')
+            order.id = newId
+            order.product = null
+            order.quantity = null
+            order.total_price = null
+            order.price = null
+        }
+        compute_total()
     })
 
     function addOrder(obj){
-    orders.push({'id': obj.id, 'product': obj.product, 'quantity': obj.quantity, 'total_price': obj.total_price, 'price': obj.price})
-    newId += 1
-    var row = `<tr scope="row" class="transaction_row-${obj.id}">
+        orders.push({'id': obj.id, 'product': obj.product, 'quantity': obj.quantity, 'total_price': obj.total_price, 'price': obj.price})
+        newId += 1
+        var row = `<tr scope="row" class="transaction_row-${obj.id}">
                         <td >
                             <input type="checkbox" id="delete-${obj.id}">
                         </td>
@@ -297,11 +348,11 @@
                         <td id="quantity-${obj.id}">${obj.quantity}</td>
                         <td id="total-price-${obj.id}">${obj.total_price}</td>
                    </tr>`
-    $('#transactions-table').append(row)
+        $('#transactions-table').append(row)
     }
 
     function changeDeleteStatus(obj){
-    pass
+        pass
     }
 
 </script>
