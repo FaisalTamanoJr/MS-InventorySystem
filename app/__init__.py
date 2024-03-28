@@ -19,5 +19,5 @@ login = LoginManager(app)
 login.login_view = 'login' # Assigns the login page that gets redirected to when a view function is under
 # @login_required.
 
-from app import routes, models  # Although it seems odd, the import was placed here to deal with the circular import
+from app import helpers, routes, models  # Although it seems odd, the import was placed here to deal with the circular import
 # issue.

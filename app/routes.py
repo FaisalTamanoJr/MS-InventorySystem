@@ -8,8 +8,8 @@ import sqlalchemy as sa
 from app import db
 from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType, Transaction, Order
 from urllib.parse import urlsplit
-from dateutil import tz
 from datetime import datetime, timezone
+from app.helpers import convert_to_local_datetime
 
 
 # The decorators, or the code that starts with "@", are used for linking the URL given as an argument, and the function.
@@ -77,13 +77,7 @@ def sales_register():
     total_paid = 0
     total_quantity = 0
     for transaction in transactions_today:
-        # Get transaction time
-        from_zone = tz.tzutc()
-        to_zone = tz.tzlocal()
-        utc = transaction.transaction_date
-        utc = utc.replace(tzinfo=from_zone)
-        transaction_time = utc.astimezone(to_zone)
-        transaction_time = transaction_time.strftime("%H:%M")
+        transaction_time = convert_to_local_datetime(transaction.transaction_date, "%H:%M")
 
         # Get transaction type
         transaction_type = db.session.scalar(sa.select(TransactionType.name).where(TransactionType.id == transaction.transaction_type_id))
@@ -162,12 +156,16 @@ def process_transaction():
 @app.route('/sales/report')
 @login_required
 def sales_report():
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
     return render_template('sales_report.html', title='Sales Report')
 
 
 @app.route('/sales/trends')
 @login_required
 def sales_trends():
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
     return render_template('sales_trends.html', title='Trends')
 
 
@@ -175,6 +173,8 @@ def sales_trends():
 @app.route('/inventory')
 @login_required
 def inventory():
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
     return render_template('inventory.html', title='Overall Inventory')
 
 
@@ -228,6 +228,8 @@ def add_a_product_type():
 @app.route('/inventory/daily-report')
 @login_required
 def inventory_daily_report():
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
     return render_template('inventory_daily_report.html', title='Daily Inventory Report')
 
 
@@ -235,7 +237,10 @@ def inventory_daily_report():
 @app.route('/accounts')
 @login_required
 def accounts():
-    return render_template('accounts.html', title='Accounts')
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
+    users = db.session.scalars(sa.select(User)).all()
+    return render_template('accounts.html', title='Accounts', users=users)
 
 
 @app.route('/accounts/create-an-account', methods=['GET', 'POST'])
@@ -268,14 +273,45 @@ def create_an_account():
 @app.route('/accounts/employee')
 @login_required
 def accounts_employee():
-    return render_template('accounts_employee.html', title='Employees')
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
+    users = db.session.scalars(sa.select(User).where(User.role.has(Role.name == 'employee'))).all()
+    return render_template('accounts.html', title='Accounts', users=users)
 
 
 @app.route('/accounts/admin')
 @login_required
 def accounts_admin():
-    return render_template('accounts_admin.html', title='Admins')
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
+    users = db.session.scalars(sa.select(User).where(User.role.has(Role.name == 'admin'))).all()
+    return render_template('accounts.html', title='Accounts', users=users)
 
+@app.route('/account/<user_id>')
+@login_required
+def account(user_id):
+    if current_user.role.name != "admin":
+        return redirect(url_for('index'))
+    user = db.session.scalar(sa.select(User).where(User.id == user_id))
+
+    if user is None:
+        return "<script>alert('Account does not exist')</script>"
+
+    # For role options when changing roles
+    roles = db.session.scalars(sa.select(Role)).all()
+
+    return render_template('account.html', title=f"{user.fullname}'s account", user=user, roles=roles)
+
+@app.route('/account/<user_id>/change-role', methods=['POST'])
+@login_required
+def account_change_role(user_id):
+    role = request.get_json(force=True)
+    if role:
+        user = db.session.scalar(sa.select(User).where(User.id == user_id))
+        user.role = db.session.scalar(sa.select(Role).where(Role.name == role['name']))
+        db.session.commit()
+        flash('Role changed')
+        return "success"
 
 @app.route('/register_admin', methods=['GET', 'POST'])
 def register_admin():

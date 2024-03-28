@@ -13,6 +13,7 @@
         {% else %}
         <div><b>Admin: {{ current_user.fullname }}</b></div>
         {% endif %}
+        {% if current_user.role.name == "admin" %}
         <div>
             <b>Sales</b>
             <ul>
@@ -39,6 +40,14 @@
                 {% endif %}
             </ul>
         </div>
+        {% else %}
+        <div>
+            <b>Sales</b>
+            <ul>
+                <li><a href="{{ url_for('sales_register') }}">Register</a></li>
+            </ul>
+        </div>
+        {% endif %}
         <div>
             {% if current_user.is_anonymous %}
             <b><a href="{{ url_for('login') }}">Sign in</a></b>

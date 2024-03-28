@@ -8,6 +8,7 @@ from app import db, login
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from app.helpers import convert_to_local_datetime
 
 
 class Role(db.Model):
@@ -46,6 +47,17 @@ class User(UserMixin, db.Model):
     # Tells how the object should be printed (for debugging purposes).
     def __repr__(self):
         return '<User {}>'.format(self.fullname)
+
+    def get_age(self):
+        if self.birthday == None:
+            return "N/A"
+        return datetime.today().year - self.birthday.year
+
+    def get_birthday(self):
+        return convert_to_local_datetime(self.birthday)
+
+    def get_date_created(self):
+        return convert_to_local_datetime(self.date_created)
 
 
 # UserMixin includes safe implementations of the four requirements for flask-login to function

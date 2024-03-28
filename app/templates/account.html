@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<style>
+    .hidden {
+        display:none;
+    }
+</style>
+<h1>{{ user.fullname }}'s Account</h1>
+<p><b>Username:</b> {{ user.login.username }}</p>
+<p><b>Role:</b> {{ user.role.name }} <button id="change-role">Change Role</button>
+    <select id="choose-role" class="hidden">
+        <option></option>
+        {% for role in roles %}
+        <option>{{ role.name }}</option>
+        {% endfor %}
+    </select>
+    <button id="confirm-change-role" class="hidden">Confirm</button>
+    <button id="cancel-change-role" class="hidden">Cancel</button>
+</p>
+<p><b>Phone Number:</b> {{ user.phone }}</p>
+<p><b>Email:</b> {% if user.email %}{{ user.email }}{% else %}N/A{% endif%}</p>
+<p><b>Age:</b> {{ user.get_age() }}, <b>Birthday:</b> {{ user.get_birthday() }}</p>
+<p><b>Date Created:</b> {{ user.get_date_created() }}</p>
+
+<script>
+    $('#change-role').on('click', function(){
+        $(this).addClass('hidden')
+
+        $("#choose-role").removeClass('hidden')
+        $("#confirm-change-role").removeClass('hidden')
+        $("#cancel-change-role").removeClass('hidden')
+    })
+
+    $("#confirm-change-role").on('click', function(){
+        role = $('#choose-role').val()
+        if (role == ''){
+            alert('Please select a role.')
+        }else{
+            if (confirm('Are you sure?')){
+                var xml = new XMLHttpRequest()
+                xml.open("POST","{{ url_for('account_change_role', user_id=user.id) }}", true)
+                xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+                // Send role
+                xml.send(JSON.stringify({'name': role}))
+
+                // If successful
+                xml.onload = function(){
+                    if (this.responseText == "success"){
+                        // Reset everything
+                        $('#choose-role').val('')
+
+                        // Inform the user
+                        alert("Role successfully changed")
+
+                        // Refresh page
+                        location.reload()
+                    }else{
+                        alert("Role change unsuccessful")
+                    }
+                }
+            }else{
+                return
+            }
+        }
+    })
+
+    $("#cancel-change-role").on('click', function(){
+        $('#choose-role').val('')
+        $(this).addClass('hidden')
+        $("#choose-role").addClass('hidden')
+        $("#confirm-change-role").addClass('hidden')
+
+        $("#change-role").removeClass('hidden')
+    })
+</script>
+
+{% endblock %}
