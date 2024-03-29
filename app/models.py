@@ -134,7 +134,7 @@ class Product(db.Model):
     price: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL(precision=2))
 
     # Links to the stock table.
-    stock: so.Mapped['Stock'] = so.relationship(back_populates='product')
+    stock: so.Mapped['Stock'] = so.relationship(back_populates='product', cascade="all, delete-orphan")
 
     # Links to the user table.
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
@@ -145,11 +145,14 @@ class Product(db.Model):
     product_type: so.Mapped[ProductType] = so.relationship(back_populates='products')
 
     # Links to the order table.
-    orders: so.WriteOnlyMapped['Order'] = so.relationship(back_populates='product')
+    orders: so.WriteOnlyMapped['Order'] = so.relationship(back_populates='product', passive_deletes=True)
 
     # Tells how the object should be printed (for debugging purposes).
     def __repr__(self):
         return '<Product {}>'.format(self.name)
+
+    def get_price(self):
+        return round(self.price, 2)
 
 
 class Stock(db.Model):
@@ -169,6 +172,8 @@ class Stock(db.Model):
         self.quantity = quantity
         self.last_updated = lambda: datetime.now(timezone.utc)
 
+    def get_last_updated(self):
+        return convert_to_local_datetime(self.last_updated, format="%d %B %Y - %H:%M")
 
 class Order(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)

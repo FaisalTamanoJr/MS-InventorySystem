@@ -9,7 +9,8 @@ from app import db
 from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType, Transaction, Order
 from urllib.parse import urlsplit
 from datetime import datetime, timezone
-from app.helpers import convert_to_local_datetime
+from app.helpers import convert_to_local_datetime, truncate
+from decimal import Decimal
 
 
 # The decorators, or the code that starts with "@", are used for linking the URL given as an argument, and the function.
@@ -175,7 +176,8 @@ def sales_trends():
 def inventory():
     if current_user.role.name != 'admin':
         return redirect(url_for("index"))
-    return render_template('inventory.html', title='Overall Inventory')
+    products = db.session.scalars(sa.select(Product)).all()
+    return render_template('inventory.html', title='Overall Inventory', products=products)
 
 
 @app.route('/inventory/add-a-product', methods=['GET', 'POST'])
@@ -224,14 +226,60 @@ def add_a_product_type():
 
     return render_template('inventory_add_a_product_type.html', title='Add a Product Type', form=form)
 
-
-@app.route('/inventory/daily-report')
+@app.route('/product/<product_id>')
 @login_required
-def inventory_daily_report():
-    if current_user.role.name != 'admin':
-        return redirect(url_for("index"))
-    return render_template('inventory_daily_report.html', title='Daily Inventory Report')
+def product_details(product_id):
+    if current_user.role.name != "admin":
+        return redirect(url_for('index'))
+    product = db.session.scalar(sa.select(Product).where(Product.id == product_id))
 
+    if product is None:
+        return "<script>alert('Item does not exist')</script>"
+
+    # For role options when changing roles
+    product_types = db.session.scalars(sa.select(ProductType)).all()
+
+    return render_template('product.html', title=f"{product.name}", product=product, product_types=product_types)
+
+@app.route('/product/<product_id>/changes', methods=['POST'])
+@login_required
+def product_changes(product_id):
+    if current_user.role.name != "admin":
+        return redirect(url_for('index'))
+    changes = request.get_json(force=True)
+    print(changes)
+    product = db.session.scalar(sa.select(Product).where(Product.id == product_id))
+
+    if changes["name"] != "":
+        product.name = changes["name"]
+
+    if changes["type"] != "":
+        product.product_type = db.session.scalar(sa.select(ProductType).where(ProductType.name == changes["type"]))
+
+    if changes["price"].isdecimal():
+        price = Decimal(changes["price"])
+        product.price = price
+
+    if changes["stock"].isnumeric():
+        new_stock = truncate(float(changes["stock"]), 0)
+        if new_stock >= 0:
+            old_stock = db.session.scalar(sa.select(Stock).where(Stock.product_id == product_id))
+            old_stock.quantity = new_stock
+            old_stock.last_updated = datetime.now(timezone.utc)
+
+    db.session.commit()
+    flash('Product detail changes')
+    return "success"
+
+@app.route('/product/<product_id>/delete', methods=['POST', 'GET'])
+@login_required
+def delete_product(product_id):
+    if current_user.role.name != "admin":
+        return redirect(url_for('index'))
+    user = db.session.scalar(sa.select(Product).where(Product.id == product_id))
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('inventory'))
 
 # Accounts
 @app.route('/accounts')

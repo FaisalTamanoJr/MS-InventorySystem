@@ -1,10 +1,69 @@
-{% extends "base.html" %}
+<html>
+<head>
+    {% if title %}
+    <title>{{ title }} - MS-InventorySystem</title>
+    {% else %}
+    <title>MS-InventorySystem</title>
+    {% endif %}
+</head>
+<body>
 
-{% block content %}
-<div>
-    <ul>
-        <li><a href="{{ url_for('add_a_product') }}">Add a Product</a></li>
-        <li><a href="{{ url_for('add_a_product_type') }}">Add a Product Type</a></li>
-    </ul>
-</div>
-{% endblock %}
+<!-- bootstrap for tables design - edit if other design is preferred -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+
+<!-- dataTables.js, library for advanced table features -->
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
+<button type=button id="to-index">Home</button>
+<button id="to-add-product">Add Product</button>
+<button id="to-add-product-type">Add Product Type</button>
+
+<script>
+    // Button to redirect to home, add product, and add product-type
+    $("#to-index").on('click', function(){
+        window.location = "{{ url_for('index') }}"
+    })
+
+    $("#to-add-product").on('click', function(){
+        window.location = "{{ url_for('add_a_product') }}"
+    })
+
+    $("#to-add-product-type").on('click', function(){
+        window.location = "{{ url_for('add_a_product_type') }}"
+    })
+</script>
+
+<!-- Accounts table -->
+<table id="products-table" class="table table-striped">
+    <thead>
+    <tr>
+        <th>Item Name</th>
+        <th>Type</th>
+        <th>Price</th>
+        <th>Stocks</th>
+        <th>Last Stock Changes On</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+    <tr>
+        <td><a href="{{ url_for('product_details', product_id=product.id) }}">{{ product.name }}</a></td>
+        <td>{{ product.product_type.name }}</td>
+        <td>{{ product.get_price() }}</td>
+        <td>{{ product.stock.quantity }}</td>
+        <td>{{ product.stock.get_last_updated() }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('#products-table').DataTable();
+    });
+</script>
+</body>
+</html>

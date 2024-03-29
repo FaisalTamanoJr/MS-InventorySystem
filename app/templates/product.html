@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<style>
+    .hidden {
+        display:none;
+    }
+</style>
+
+<h1>{{ product.name }}</h1>
+<button id="edit-details">Edit Details</button>
+
+<p><b>Name:</b> {{ product.name }}
+    <input type="text" id="change-name" class="hidden" placeholder="New Name">
+</p>
+
+<p><b>Type:</b> {{ product.product_type.name }}
+    <select id="change-type" class="hidden">
+        <option></option>
+        {% for product_type in product_types %}
+        <option>{{ product_type.name }}</option>
+        {% endfor %}
+    </select>
+</p>
+
+<p><b>Price:</b> {{ product.get_price() }}
+    <input type="text" id="change-price" class="hidden" placeholder="New Price">
+</p>
+
+<p><b>Stocks:</b> {{ product.stock.quantity }}
+    <input type="text" id="update-stock" class="hidden" placeholder="New Stock Amount">
+</p>
+
+<p><b>Last Updated:</b> {{ product.stock.get_last_updated() }}</p>
+<p><b>Added by:</b> <a href="{{ url_for('account', user_id=product.user.id) }}">{{ product.user.fullname }}</a></p>
+
+<button id="save-changes" class="hidden">Save Changes</button>
+<button id="cancel-changes" class="hidden">Cancel</button>
+<button id="delete-product">Delete Product</button>
+
+<script>
+    $('#edit-details').on('click', function(){
+        $(this).addClass('hidden')
+        $("#change-name").removeClass('hidden')
+        $("#change-type").removeClass('hidden')
+        $("#change-price").removeClass('hidden')
+        $("#update-stock").removeClass('hidden')
+        $("#save-changes").removeClass('hidden')
+        $("#cancel-changes").removeClass('hidden')
+    })
+
+    $("#save-changes").on('click', function(){
+        name = $('#change-name').val()
+        type = $('#change-type').val()
+        price = $('#change-price').val()
+        stock = $('#update-stock').val()
+
+        if (confirm('Are you sure?')){
+            var xml = new XMLHttpRequest()
+            xml.open("POST", "{{ url_for('product_changes', product_id=product.id) }}", true)
+            xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+            // Send changes
+            changes = {
+                "name" : name,
+                "type" : type,
+                "price" : price,
+                "stock" : stock
+            }
+            xml.send(JSON.stringify(changes))
+
+            // If successful
+            xml.onload = function(){
+                if (this.responseText == "success"){
+
+                    // Reset everything
+                    $("#change-name").val('')
+                    $("#change-type").val('')
+                    $("#change-price").val('')
+                    $("#update-stock").val('')
+
+                     // Inform the user
+                    alert("Changes Successful")
+
+                    // Refresh the page
+                    location.reload()
+                }else{
+                    alert("Changes Unsuccessful")
+                }
+            }
+        }else{
+            return
+        }
+    })
+
+    $("#cancel-changes").on('click', function(){
+        $("#change-name").val('')
+        $("#change-type").val('')
+        $("#change-price").val('')
+        $("#update-stock").val('')
+
+        $(this).addClass('hidden')
+        $("#change-name").addClass('hidden')
+        $("#change-type").addClass('hidden')
+        $("#change-price").addClass('hidden')
+        $("#update-stock").addClass('hidden')
+        $("#save-changes").addClass('hidden')
+        $("#edit-details").removeClass('hidden')
+    })
+
+
+    $("#delete-product").on('click', function(){
+        if (confirm("Are you sure?")){
+            window.location = "{{ url_for('delete_product', product_id=product.id) }}"
+        }else{
+            return
+        }
+    })
+</script>
+
+{% endblock %}

@@ -1,4 +1,5 @@
 from dateutil import tz
+import math
 
 
 # Convert date to local timezone and in a more accessible format
@@ -12,3 +13,8 @@ def convert_to_local_datetime(date, format="%d %B %Y"):
         desired_date_format = desired_date_format.strftime(format)
         return desired_date_format
     return "N/A"
+
+
+# Trims a given number without rounding it off
+def truncate(f, n):
+    return math.floor(f * 10 ** n) / 10 ** n
