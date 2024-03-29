@@ -115,6 +115,12 @@ class Transaction(db.Model):
     def __repr__(self):
         return '<Transaction {}>'.format(self.id)
 
+    def get_date_and_time(self):
+        return convert_to_local_datetime(self.transaction_date, format="%d %B %Y - %H:%M")
+
+    def get_total_amount_paid(self):
+        return round(self.total_amount_paid, 2)
+
 
 class ProductType(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)

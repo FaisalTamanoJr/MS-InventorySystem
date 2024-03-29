@@ -20,10 +20,8 @@ def index():
     if db.session.scalars(sa.select(User)).first() is None:  # If there are no existing users, redirect to admin
         # registration page.
         return redirect(url_for('register_admin'))
-    if current_user.role.name == 'employee':
+    else:
         return redirect(url_for('sales_register'))
-    elif current_user.role.name == 'admin':
-        return redirect(url_for('sales_report'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -159,7 +157,17 @@ def process_transaction():
 def sales_report():
     if current_user.role.name != 'admin':
         return redirect(url_for("index"))
-    return render_template('sales_report.html', title='Sales Report')
+    transactions = db.session.scalars(sa.select(Transaction)).all()
+    return render_template('sales_report.html', title='Sales Report', transactions=transactions)
+
+@app.route('/sales/report/transaction/<transaction_id>')
+@login_required
+def transaction(transaction_id):
+    if current_user.role.name != 'admin':
+        return redirect(url_for("index"))
+    transaction = db.session.scalar(sa.select(Transaction).where(Transaction.id == transaction_id))
+    orders = db.session.scalars(sa.select(Order).where(Order.transaction_id == transaction_id)).all()
+    return render_template('transaction.html', title=f"Transaction - {transaction_id}", transaction=transaction, orders=orders)
 
 
 @app.route('/sales/trends')
