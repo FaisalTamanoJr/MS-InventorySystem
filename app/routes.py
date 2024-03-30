@@ -1,6 +1,8 @@
 """This module returns the appropriate webpage given a request/URL."""
 
 from flask import render_template, flash, redirect, url_for, request
+from sqlalchemy import and_
+
 from app import app  # Import the app variable from the app package.
 from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
 from flask_login import current_user, login_user, logout_user, login_required
@@ -8,7 +10,7 @@ import sqlalchemy as sa
 from app import db
 from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType, Transaction, Order
 from urllib.parse import urlsplit
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from app.helpers import convert_to_local_datetime, truncate
 from decimal import Decimal
 
@@ -168,15 +170,6 @@ def transaction(transaction_id):
     transaction = db.session.scalar(sa.select(Transaction).where(Transaction.id == transaction_id))
     orders = db.session.scalars(sa.select(Order).where(Order.transaction_id == transaction_id)).all()
     return render_template('transaction.html', title=f"Transaction - {transaction_id}", transaction=transaction, orders=orders)
-
-
-@app.route('/sales/trends')
-@login_required
-def sales_trends():
-    if current_user.role.name != 'admin':
-        return redirect(url_for("index"))
-    return render_template('sales_trends.html', title='Trends')
-
 
 # Inventory
 @app.route('/inventory')

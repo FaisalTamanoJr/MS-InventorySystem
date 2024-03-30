@@ -121,6 +121,9 @@ class Transaction(db.Model):
     def get_total_amount_paid(self):
         return round(self.total_amount_paid, 2)
 
+    def get_day(self):
+        return convert_to_local_datetime(self.transaction_date, format="%a")
+
 
 class ProductType(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
