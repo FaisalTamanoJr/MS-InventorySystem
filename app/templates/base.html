@@ -124,18 +124,12 @@
                 width: 1390px;
                 height: 775.19px;
             }
-            .right-section .default-content{
-                padding-top: 150px;
-                padding-left: 300px;
-                display: flex;
-                align-items: center;
-            }
 
         </style>
     </head>
     <body>
         <div class="sidebar">
-            <img src="https://4.bp.blogspot.com/-FjLcphEXLSI/WG0AeOhfdbI/AAAAAAAAE1A/jhqkNGX4qD4E93qw0thbHzrB0npLiE5rACLcB/s1600/master%2Bsiomai.png" alt="master siomai logo">
+            <img src="https://4.bp.blogspot.com/-FjLcphEXLSI/WG0AeOhfdbI/AAAAAAAAE1A/jhqkNGX4qD4E93qw0thbHzrB0npLiE5rACLcB/s1600/master%2Bsiomai.png" alt="master siomai logo" style="margin-left: 40px; margin-top: 40px;">
             <div style='color: white; font-size: 15px; text-align: right; padding-right: 20px; font-style: italic;'>
                 {% if current_user.role.name == "employee" %}
                 <div><b>Employee: {{ current_user.fullname }}</b></div>
@@ -144,7 +138,8 @@
                 {% endif %}
                 {% if current_user.role.name == "admin" %}
             </div>
-
+            <img src="https://clipground.com/images/thin-white-line-png-3.png" alt="line divider" style="height: 30px; width: 300px; margin-top: 0px; margin-left: 0px;">
+            {% if current_user.role.name == "admin" %}
             <ul class = "nav-links">
                 <li>
                     <div class="main-menu" style="margin-top: 30px;">
@@ -182,24 +177,10 @@
                         <li><a href="{{ url_for('accounts') }}">All Accounts</a></li>
                         <li><a href="{{ url_for('accounts_employee') }}">Employees</a></li>
                         <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
-                        {% if current_user.role.name == "admin" %}
                         <li><a href="{{ url_for('create_an_account') }}">Create an Account</a></li>
-                        {% endif %}
                     </ul>
                 </li>
-                {% else %}
-                <li>
-                    <div class="main-menu" style="margin-top: 30px;">
-                        <b>SALES</b>
-                        <i class='bx bxs-chevron-down arrow'></i>
-                    </div>
 
-                    <ul class="sub-menu">
-                        <li><b class="main-sub-menu">SALES</b></li>
-                        <li><a href="{{ url_for('sales_register') }}">Register</a></li>
-                    </ul>
-                </li>
-                {% endif %}
 
                 <div style="color: white; margin-top: 40px;">----------------------------------------</div>
 
@@ -213,9 +194,45 @@
                     </div>
                 </li>
             </ul>
+            {% endif %}
+
+            {% else %}
+            <style>
+                .right-section{
+                    width: 1390px;
+                    z-index: -1;
+                    position: relative;
+                    top: -1200px;"
+                }
+            </style>
+            <img src="https://clipground.com/images/thin-white-line-png-3.png" alt="line divider" style="height: 30px; width: 300px; margin-top: 0px; margin-left: 0px;">
+            <ul class="nav-links" style="height: 1000px; margin-right: 0px;">
+                <li>
+                    <div class="main-menu" style="margin-top: 30px;">
+                        <b>SALES</b>
+                        <i class='bx bxs-chevron-down arrow'></i>
+                    </div>
+
+                    <ul class="sub-menu" >
+                        <li><b class="main-sub-menu">SALES</b></li>
+                        <li><a href="{{ url_for('sales_register') }}" >Register</a></li>
+                    </ul>
+                </li>
+                <div style="color: white; margin-top: 40px; padding-right: 10px;">----------------------------------------</div>
+                <li>
+                    <div>
+                        {% if current_user.is_anonymous %}
+                        <b><a href="{{ url_for('login') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-in'></i>Sign in</a></b>
+                        {% else %}
+                        <b><a href="{{ url_for('logout') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-out'></i>Sign out</a></b>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+            {% endif %}
         </div>
 
-        <section class="right-section">
+        <section class="right-section" >
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <ul>
