@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from app import db
 from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType, Transaction, Order
 from urllib.parse import urlsplit
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from app.helpers import convert_to_local_datetime, truncate
 from decimal import Decimal
 
