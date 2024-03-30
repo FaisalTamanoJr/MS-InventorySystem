@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="row" style="margin-top: 20px; margin-left: 37.5%;">
-                        <form action="" method="post" novalidate>
+                    <form action="" method="post" novalidate>
                         {{ form.hidden_tag() }}
                         <p>
                             {{ form.fullname.label }} <br>
@@ -59,7 +59,7 @@
                         </p>
                         <p>
                             {{ form.birthday.label }} <br>
-                            {{ form.birthday(class='datepicker', style='width: 300px;', placeholder='YYYY-MM-DD') }}<br>
+                            {{ form.birthday(class='datepicker', style='width: 300px;') }}<br>
                             {% for error in form.birthday.errors %}
                             <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}

@@ -6,64 +6,239 @@
         {% else %}
         <title>MS-InventorySystem</title>
         {% endif %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <style>
+            .sidebar{
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 300px;
+                background-color: #0d0d0d;
+            }
+            .sidebar img{
+                float: left;
+                margin-top: 20px;
+                margin-left: 15px;
+                width: 226.08px;
+                height:59.04px;
+            }
+            .sidebar .nav-links{
+                background-color: #3D3D3D;
+                margin-top: 60px;
+                padding-left: 0px;
+                color: white;
+                overflow: auto;
+                border-radius: 30px 30px 0px 0px;
+                height: 100%;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+            .sidebar .nav-links::-webkit-scrollbar{
+                display: none;
+            }
+            .sidebar .nav-links li{
+                position: relative;
+                list-style: none;
+                transition: all 0.4s ease;
+            }
+            .sidebar .nav-links li:hover{
+                background: #252525;
+            }
+            .sidebar .nav-links li i{
+                height: 50px;
+                min-width: 78px;
+                text-align: center;
+                line-height: 50px;
+                color: white;
+                transition: all 0.3s ease;
+            }
+            .sidebar .nav-links li.showSubMenu i.arrow{
+                transform: rotate(-180deg);
+            }
+            .sidebar .nav-links li a{
+                display: flex;
+                align-items:  center;
+                text-decoration: none;
+            }
+
+            .sidebar .nav-links li .main-menu{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-left: 32px;
+                padding-bottom: 5px;
+                font-size: 15px;
+            }
+            .sidebar .nav-links li .sub-menu{
+                margin-top: -10px;
+                background: #252525;
+                padding-left: 64px;
+                display: none;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            .sidebar .nav-links li.showSubMenu .sub-menu{
+                display: block;
+            }
+            .sidebar .nav-links li .sub-menu a{
+                color: #9FA8A8;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            }
+            .sidebar .nav-links li .sub-menu a:hover{
+                color: #FF7070;
+            }
+            .sidebar.close .nav-links li .sub-menu{
+                position: absolute;
+                top: -10px;
+                margin-top: 0;
+                padding-left: 40px;
+                padding-bottom: 6px;
+                width: 220px;
+                border-radius: 0px 6px 6px 0px;
+                transition: all 0.4s ease;
+                opacity: 0;
+                pointer-event: none;
+            }
+            .sidebar.close .nav-links li:hover .sub-menu{
+                top: 0;
+                opacity: 1;
+                pointer-event: auto;
+            }
+            .sidebar .nav-links li .sub-menu .main-sub-menu{
+                display: none;
+
+            }
+            .sidebar.close .nav-links li .sub-menu .main-sub-menu{
+                opacity: 1;
+                display: block;
+            }
+            .right-section{
+                position: relative;
+                left: 305px;
+                width: 1390px;
+                height: 775.19px;
+            }
+            .right-section .default-content{
+                padding-top: 150px;
+                padding-left: 300px;
+                display: flex;
+                align-items: center;
+            }
+
+        </style>
     </head>
     <body>
-        {% if current_user.role.name == "employee" %}
-        <div><b>Employee: {{ current_user.fullname }}</b></div>
-        {% else %}
-        <div><b>Admin: {{ current_user.fullname }}</b></div>
-        {% endif %}
-        {% if current_user.role.name == "admin" %}
-        <div>
-            <b>Sales</b>
-            <ul>
-                <li><a href="{{ url_for('sales_register') }}">Register</a></li>
-                <li><a href="{{ url_for('sales_report') }}">Sales Report</a></li>
-                <li><a href="{{ url_for('sales_trends') }}">Trends</a></li>
-            </ul>
-        </div>
-        <div>
-            <b>Inventory</b>
-            <ul>
-                <li><a href="{{ url_for('inventory') }}">Overall Inventory</a></li>
-            </ul>
-        </div>
-        <div>
-            <b>Manage Accounts</b>
-            <ul>
-                <li><a href="{{ url_for('accounts') }}">All Accounts</a></li>
-                <li><a href="{{ url_for('accounts_employee') }}">Employees</a></li>
-                <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
-                {% if current_user.role.name == "admin" %}
-                    <li><a href="{{ url_for('create_an_account') }}">Create an Account</a></li>
+        <div class="sidebar">
+            <img src="https://4.bp.blogspot.com/-FjLcphEXLSI/WG0AeOhfdbI/AAAAAAAAE1A/jhqkNGX4qD4E93qw0thbHzrB0npLiE5rACLcB/s1600/master%2Bsiomai.png" alt="master siomai logo">
+            <div style='color: white; font-size: 15px; text-align: right; padding-right: 20px; font-style: italic;'>
+                {% if current_user.role.name == "employee" %}
+                <div><b>Employee: {{ current_user.fullname }}</b></div>
+                {% else %}
+                <div><b>Admin: {{ current_user.fullname }}</b></div>
                 {% endif %}
+                {% if current_user.role.name == "admin" %}
+            </div>
+
+            <ul class = "nav-links">
+                <li>
+                    <div class="main-menu" style="margin-top: 30px;">
+                        <b>SALES</b>
+                        <i class='bx bxs-chevron-down arrow'></i>
+                    </div>
+
+                    <ul class="sub-menu">
+                        <li><b class="main-sub-menu">SALES</b></li>
+                        <li><a href="{{ url_for('sales_register') }}">Register</a></li>
+                        <li><a href="{{ url_for('sales_report') }}">Sales Report</a></li>
+                        <li><a href="{{ url_for('sales_trends') }}">Trends</a></li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <div class="main-menu">
+                        <b>INVENTORY</b>
+                        <i class='bx bxs-chevron-down arrow'></i>
+                    </div>
+
+                    <ul class="sub-menu">
+                        <li><b class="main-sub-menu">INVENTORY</b></li>
+                        <li><a href="{{ url_for('inventory') }}">Overall Inventory</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <div class="main-menu">
+                        <b>MANAGE ACCOUNTS</b>
+                        <i class='bx bxs-chevron-down arrow'></i>
+                    </div>
+                    <ul class="sub-menu">
+                        <li><b class="main-sub-menu">MANAGE ACCOUNTS</b></li>
+                        <li><a href="{{ url_for('accounts') }}">All Accounts</a></li>
+                        <li><a href="{{ url_for('accounts_employee') }}">Employees</a></li>
+                        <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
+                        {% if current_user.role.name == "admin" %}
+                        <li><a href="{{ url_for('create_an_account') }}">Create an Account</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% else %}
+                <li>
+                    <div class="main-menu" style="margin-top: 30px;">
+                        <b>SALES</b>
+                        <i class='bx bxs-chevron-down arrow'></i>
+                    </div>
+
+                    <ul class="sub-menu">
+                        <li><b class="main-sub-menu">SALES</b></li>
+                        <li><a href="{{ url_for('sales_register') }}">Register</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                <div style="color: white; margin-top: 40px;">----------------------------------------</div>
+
+                <li>
+                    <div>
+                        {% if current_user.is_anonymous %}
+                        <b><a href="{{ url_for('login') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-in'></i>Sign in</a></b>
+                        {% else %}
+                        <b><a href="{{ url_for('logout') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-out'></i>Sign out</a></b>
+                        {% endif %}
+                    </div>
+                </li>
             </ul>
         </div>
-        {% else %}
-        <div>
-            <b>Sales</b>
+
+        <section class="right-section">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
             <ul>
-                <li><a href="{{ url_for('sales_register') }}">Register</a></li>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
             </ul>
-        </div>
-        {% endif %}
-        <div>
-            {% if current_user.is_anonymous %}
-            <b><a href="{{ url_for('login') }}">Sign in</a></b>
-            {% else %}
-            <b><a href="{{ url_for('logout') }}">Sign out</a></b>
             {% endif %}
-        </div>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </section>
+
+        <script>
+            let arrow = document.querySelectorAll(".arrow");
+
+            for(var i=0; i < arrow.length; i++){
+                arrow[i].addEventListener("click", (e)=>{
+                let arrowParent = e.target.parentElement.parentElement;
+                console.log(arrowParent);
+                arrowParent.classList.toggle("showSubMenu");
+                });
+            }
+        </script>
     </body>
 </html>
