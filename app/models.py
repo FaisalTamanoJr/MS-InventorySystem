@@ -201,6 +201,9 @@ class Order(db.Model):
     def __repr__(self):
         return '<Order {}>'.format(self.id)
 
+    def get_total_price(self):
+        return round(self.total_price, 2)
+
 
 # This function will allow the Flask-login extension to load a user
 @login.user_loader
