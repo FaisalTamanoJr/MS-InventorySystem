@@ -1,58 +1,110 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Register an Account</h1>
-<form action="" method="post" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.fullname.label }}<br>
-        {{ form.fullname(size=32) }}<br>
-        {% for error in form.fullname.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.phone.label }}<br>
-        {{ form.phone(size=32) }}<br>
-        {% for error in form.phone.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.email.label }}<br>
-        {{ form.email(size=32) }}<br>
-        {% for error in form.email.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.birthday.label }}<br>
-        {{ form.birthday(class='datepicker') }}<br>
-        {% for error in form.birthday.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.role.label }}<br>
-        {{ form.role }}<br>
-        {% for error in form.role.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.username.label }}<br>
-        {{ form.username(size=32) }}<br>
-        {% for error in form.username.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password(size=32) }}<br>
-        {% for error in form.password.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-</form>
+<style>
+    .create{
+        margin-top: 50px;
+        text-align: center;
+    }
+    .create .heading1{
+        padding-left: 80px;
+        font-weight: bold;
+        font-style: italic;
+        padding-top: 40px;
+        font-size: 60px;
+        color: #A60000;
+        margin-bottom: 20px;
+    }
+    .create .components{
+        margin-left: 470px;
+        width: 520px;
+        text-align: center;
+        background: #F7E4E4;
+        padding: 60px;
+        border-radius: 30px;
+    }
+    .labels{
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .textboxes{
+        height: 30px;
+        width: 269.333px;
+        border: none;
+        font-size: 18px;
+    }
+    .button{
+       margin-top: 23px;
+       background-color: #B33A3A;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       padding: 8px 20px;
+       border: none;
+       font-size: 18px;
+    }
+    .button:hover{
+        background-color: grey;
+    }
+</style>
+<div class="create">
+    <h1 class="heading1">REGISTER AN ACCOUNT</h1>
+    <div class="components">
+        <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.fullname.label(class='labels') }}<br>
+            {{ form.fullname(size=32, class='textboxes') }}<br>
+            {% for error in form.fullname.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.phone.label(class='labels') }}<br>
+            {{ form.phone(size=32, class='textboxes') }}<br>
+            {% for error in form.phone.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.email.label(class='labels') }}<br>
+            {{ form.email(size=32, class='textboxes') }}<br>
+            {% for error in form.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.birthday.label(class='labels') }}<br>
+            {{ form.birthday(class='datepicker', class='textboxes') }}<br>
+            {% for error in form.birthday.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.role.label(class='labels') }}<br>
+            {{ form.role(class='textboxes', style='text-align: center;') }}<br>
+            {% for error in form.role.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.username.label(class='labels') }}<br>
+            {{ form.username(size=32, class='textboxes') }}<br>
+            {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password.label(class='labels') }}<br>
+            {{ form.password(size=32, class='textboxes') }}<br>
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p style="margin-top: 30px; margin-bottom: 0px;">{{ form.submit(class='button') }}</p>
+    </form>
+    </div>
+
+</div>
+
 {% endblock %}
