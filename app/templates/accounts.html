@@ -5,46 +5,91 @@
     {% else %}
     <title>MS-InventorySystem</title>
     {% endif %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        .container{
+            color: white;
+            margin: 40px;
+            margin-top: 70px;
+        }
+        .name-links{
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+        .name-links:hover{
+            color: #FF7070;
+        }
+        .button{
+           margin-top: 23px;
+           background-color: #B33A3A;
+           border-radius: 40px;
+           font-style: italic;
+           color: white;
+           padding: 8px 20px;
+           border: none;
+           font-size: 18px;
+           width: 130px;
+           font-weight: bold;
+        }
+        .button:hover{
+            background-color: grey;
+        }
+        .heading1{
+            text-align: center;
+            font-weight: bold;
+            font-style: italic;
+            padding-top: 40px;
+            font-size: 40px;
+            color: white;
+        }
+    </style>
 </head>
-<body>
+<body style="background-color: #0d0d0d;">
+    <div class="container">
+        <div class="form-control-sm" style="text-align: center;"> <img src="https://4.bp.blogspot.com/-FjLcphEXLSI/WG0AeOhfdbI/AAAAAAAAE1A/jhqkNGX4qD4E93qw0thbHzrB0npLiE5rACLcB/s1600/master%2Bsiomai.png" width="602.88" height="157.44" alt="master siomai logo"></div>
+        <div class="heading1">MANAGE ACCOUNTS</div>
+        <form action="{{ url_for('index') }}" style="margin-top: 20px; margin-bottom: 50px;">
+        <input type="submit" value="Home" class="button"/>
+        </form>
 
-    <form action="{{ url_for('index') }}">
-        <input type="submit" value="Home" />
-    </form>
+        <!-- bootstrap for tables design - edit if other design is preferred -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
 
-    <!-- bootstrap for tables design - edit if other design is preferred -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+        <!-- dataTables.js, library for advanced table features -->
+        <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
 
-    <!-- dataTables.js, library for advanced table features -->
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
-
-    <!-- Accounts table -->
-    <table id="accounts-table" class="table table-striped">
-      <thead>
+        <!-- Accounts table -->
+        <table id="accounts-table" class="table table-striped" style="margin-le">
+        <thead>
         <tr>
-          <th>Name</th>
-          <th>Role</th>
-          <th>Date Created</th>
+          <th style="color: white;">Name</th>
+          <th style="color: white;">Role</th>
+          <th style="color: white;">Date Created</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         {% for user in users %}
-          <tr>
-            <td><a href="{{ url_for('account', user_id=user.id) }}">{{ user.fullname }}</a></td>
-            <td>{{ user.role.name }}</td>
-            <td>{{ user.get_date_created() }}</td>
+          <tr >
+            <td><a href="{{ url_for('account', user_id=user.id) }}" class="name-links">{{ user.fullname }}</a></td>
+            <td style='color: white;'>{{ user.role.name }}</td>
+            <td style='color: white;'>{{ user.get_date_created() }}</td>
           </tr>
         {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+        </table>
 
-  <script>
-    $(document).ready(function () {
-      $('#accounts-table').DataTable();
-    });
-  </script>
+        <script>
+        $(document).ready(function () {
+        $('#accounts-table').DataTable();
+        });
+        </script>
+    </div>
 </body>
 </html>
