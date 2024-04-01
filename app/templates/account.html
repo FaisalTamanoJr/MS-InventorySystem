@@ -9,73 +9,137 @@
         display:none;
     }
 </style>
+<button id="edit-details">Edit Details</button>
+
 <h2>{{ user.fullname }}'s Account</h2>
-<p><b>Username:</b> {{ user.login.username }}</p>
-<p><b>Role:</b> {{ user.role.name }} <button id="change-role">Change Role</button>
-    <select id="choose-role" class="hidden">
+<p><b>Full Name:</b> {{ user.fullname }}
+    <input type="text" id="change-fullname" class="hidden" placeholder="New Fullname">
+</p>
+
+<p><b>Username:</b> {{ user.login.username }}
+    <input type="text" id="change-username" class="hidden" placeholder="New Username">
+</p>
+
+<p><b>Role:</b> {{ user.role.name }}
+    <select id="change-role" class="hidden">
         <option></option>
         {% for role in roles %}
         <option>{{ role.name }}</option>
         {% endfor %}
     </select>
-    <button id="confirm-change-role" class="hidden">Confirm</button>
-    <button id="cancel-change-role" class="hidden">Cancel</button>
 </p>
-<p><b>Phone Number:</b> {{ user.phone }}</p>
-<p><b>Email:</b> {% if user.email %}{{ user.email }}{% else %}N/A{% endif%}</p>
-<p><b>Age:</b> {{ user.get_age() }}, <b>Birthday:</b> {{ user.get_birthday() }}</p>
+
+<p><b>Phone Number:</b> {{ user.phone }}
+    <input type="text" id="change-phone" class="hidden" placeholder="New Phone Number">
+</p>
+
+<p><b>Email:</b> {% if user.email %}{{ user.email }}{% else %}N/A{% endif%}
+    <input type="text" id="change-email" class="hidden" placeholder="New Email">
+</p>
+
+<p><b>Age:</b> {{ user.get_age() }}, <b>Birthday:</b> {{ user.get_birthday() }}
+    <input type="date" id="change-birthday" class="hidden" placeholder="New Birthdate">
+</p>
 <p><b>Date Created:</b> {{ user.get_date_created() }}</p>
 
-<script>
-    $('#change-role').on('click', function(){
-        $(this).addClass('hidden')
+<button id="save-changes" class="hidden">Save Changes</button>
+<button id="cancel-changes" class="hidden">Cancel</button>
+{% if current_user.id != user.id %}
+<button id="delete-account">Delete Account</button>
+{% endif %}
 
-        $("#choose-role").removeClass('hidden')
-        $("#confirm-change-role").removeClass('hidden')
-        $("#cancel-change-role").removeClass('hidden')
+<script>
+    $('#edit-details').on('click', function(){
+        $(this).addClass('hidden')
+        $("#change-fullname").removeClass('hidden')
+        $("#change-username").removeClass('hidden')
+        $("#change-role").removeClass('hidden')
+        $("#change-phone").removeClass('hidden')
+        $("#change-email").removeClass('hidden')
+        $("#change-birthday").removeClass('hidden')
+        $("#save-changes").removeClass('hidden')
+        $("#cancel-changes").removeClass('hidden')
     })
 
-    $("#confirm-change-role").on('click', function(){
-        role = $('#choose-role').val()
-        if (role == ''){
-            alert('Please select a role.')
-        }else{
-            if (confirm('Are you sure?')){
-                var xml = new XMLHttpRequest()
-                xml.open("POST","{{ url_for('account_change_role', user_id=user.id) }}", true)
-                xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    $("#save-changes").on('click', function(){
+        fullname = $('#change-fullname').val()
+        username = $('#change-username').val()
+        role = $('#change-role').val()
+        phone = $('#change-phone').val()
+        email = $('#change-email').val()
+        birthday = $('#change-birthday').val()
 
-                // Send role
-                xml.send(JSON.stringify({'name': role}))
+        if (confirm('Are you sure?')){
+            var xml = new XMLHttpRequest()
+            xml.open("POST", "{{ url_for('account_changes', user_id=user.id) }}", true)
+            xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
-                // If successful
-                xml.onload = function(){
-                    if (this.responseText == "success"){
-                        // Reset everything
-                        $('#choose-role').val('')
+            // Send changes
+            changes = {
+                "fullname" : fullname,
+                "username" : username,
+                "role" : role,
+                "phone" : phone,
+                "email" : email,
+                "birthday" : birthday
+            }
+            xml.send(JSON.stringify(changes))
 
-                        // Inform the user
-                        alert("Role successfully changed")
+            // If successful
+            xml.onload = function(){
+                if (this.responseText == "success"){
 
-                        // Refresh page
-                        location.reload()
+                    // Reset everything
+                    $("#change-fullname").val('')
+                    $("#change-username").val('')
+                    $("#change-role").val('')
+                    $("#change-phone").val('')
+                    $("#change-email").val('')
+                    $("#change-birthday").val('')
+
+                    // Inform the user
+                    alert("Changes Successful")
+
+                    // Refresh the page
+                    location.reload()
+                }else{
+                    if (this.responseText){
+                        alert(this.responseText)
                     }else{
-                        alert("Role change unsuccessful")
+                        alert("Changes Failed")
                     }
                 }
-            }else{
-                return
             }
+        }else{
+            return
         }
     })
 
-    $("#cancel-change-role").on('click', function(){
-        $('#choose-role').val('')
-        $(this).addClass('hidden')
-        $("#choose-role").addClass('hidden')
-        $("#confirm-change-role").addClass('hidden')
+    $("#cancel-changes").on('click', function(){
+        $("#change-fullname").val('')
+        $("#change-username").val('')
+        $("#change-role").val('')
+        $("#change-phone").val('')
+        $("#change-email").val('')
+        $("#change-birthday").val('')
 
-        $("#change-role").removeClass('hidden')
+        $(this).addClass('hidden')
+        $("#change-fullname").addClass('hidden')
+        $("#change-username").addClass('hidden')
+        $("#change-role").addClass('hidden')
+        $("#change-phone").addClass('hidden')
+        $("#change-email").addClass('hidden')
+        $("#change-birthday").addClass('hidden')
+        $("#save-changes").addClass('hidden')
+        $("#edit-details").removeClass('hidden')
+    })
+
+    $("#delete-account").on('click', function(){
+        if (confirm("Are you sure?")){
+            window.location = "{{ url_for('delete_account', user_id=user.id) }}"
+        }else{
+            return
+        }
     })
 </script>
 

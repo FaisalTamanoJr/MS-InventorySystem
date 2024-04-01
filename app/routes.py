@@ -72,8 +72,10 @@ def sales_register():
     discount_percentage = 0.1
 
     # Get the transactions of current day
-    current_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
-    transactions_today = db.session.scalars(sa.select(Transaction).where(Transaction.transaction_date >= current_datetime))
+
+    current_datetime = convert_to_local_datetime(datetime(datetime.today().year, datetime.today().month, datetime.today().day))
+    transactions_today = db.session.scalars(
+        sa.select(Transaction).where(Transaction.transaction_date >= current_datetime))
     transactions_today_list = []
     total_paid = 0
     total_quantity = 0
@@ -81,12 +83,13 @@ def sales_register():
         transaction_time = convert_to_local_datetime(transaction.transaction_date, "%H:%M")
 
         # Get transaction type
-        transaction_type = db.session.scalar(sa.select(TransactionType.name).where(TransactionType.id == transaction.transaction_type_id))
+        transaction_type = db.session.scalar(
+            sa.select(TransactionType.name).where(TransactionType.id == transaction.transaction_type_id))
 
         transaction_dict = {
-            "time" : transaction_time,
-            "orders" : [],
-            "transaction_type" : transaction_type,
+            "time": transaction_time,
+            "orders": [],
+            "transaction_type": transaction_type,
         }
 
         # Add to total paid
@@ -99,7 +102,7 @@ def sales_register():
             order_dict = {
                 "product": product,
                 "quantity": order.quantity,
-                "total_price": round(order.total_price,2) }
+                "total_price": round(order.total_price, 2)}
             transaction_dict["orders"].append(order_dict)
 
             # Add to total quantity
@@ -119,14 +122,15 @@ def process_transaction():
     transaction_received = request.get_json(force=True)
     if transaction_received:
         # Transaction
-        transaction_type = db.session.scalar(sa.select(TransactionType).where(TransactionType.name == transaction_received["transaction_type"]))
+        transaction_type = db.session.scalar(
+            sa.select(TransactionType).where(TransactionType.name == transaction_received["transaction_type"]))
         transaction = Transaction(
-            total_amount_paid = transaction_received['total_amount_paid'],
-            senior_citizen_name = transaction_received['senior_citizen_name'],
-            senior_citizen_id = transaction_received['senior_citizen_id'],
-            gcash_ref_no = transaction_received['gcash_ref_no'],
-            user = current_user,
-            transaction_type = transaction_type
+            total_amount_paid=transaction_received['total_amount_paid'],
+            senior_citizen_name=transaction_received['senior_citizen_name'],
+            senior_citizen_id=transaction_received['senior_citizen_id'],
+            gcash_ref_no=transaction_received['gcash_ref_no'],
+            user=current_user,
+            transaction_type=transaction_type
         )
         db.session.add(transaction)
 
@@ -142,10 +146,10 @@ def process_transaction():
                 return product.name
 
             order = Order(
-                quantity = o['quantity'],
-                total_price = o['total_price'],
-                transaction = transaction,
-                product = product
+                quantity=o['quantity'],
+                total_price=o['total_price'],
+                transaction=transaction,
+                product=product
             )
             db.session.add(order)
 
@@ -153,6 +157,7 @@ def process_transaction():
         db.session.commit()
         flash('Transaction processed')
         return "success"
+
 
 @app.route('/sales/report')
 @login_required
@@ -162,6 +167,7 @@ def sales_report():
     transactions = db.session.scalars(sa.select(Transaction)).all()
     return render_template('sales_report.html', title='Sales Report', transactions=transactions)
 
+
 @app.route('/sales/report/transaction/<transaction_id>')
 @login_required
 def transaction(transaction_id):
@@ -169,7 +175,9 @@ def transaction(transaction_id):
         return redirect(url_for("index"))
     transaction = db.session.scalar(sa.select(Transaction).where(Transaction.id == transaction_id))
     orders = db.session.scalars(sa.select(Order).where(Order.transaction_id == transaction_id)).all()
-    return render_template('transaction.html', title=f"Transaction - {transaction_id}", transaction=transaction, orders=orders)
+    return render_template('transaction.html', title=f"Transaction - {transaction_id}", transaction=transaction,
+                           orders=orders)
+
 
 # Inventory
 @app.route('/inventory')
@@ -227,6 +235,7 @@ def add_a_product_type():
 
     return render_template('inventory_add_a_product_type.html', title='Add a Product Type', form=form)
 
+
 @app.route('/product/<product_id>')
 @login_required
 def product_details(product_id):
@@ -242,17 +251,21 @@ def product_details(product_id):
 
     return render_template('product.html', title=f"{product.name}", product=product, product_types=product_types)
 
+
 @app.route('/product/<product_id>/changes', methods=['POST'])
 @login_required
 def product_changes(product_id):
     if current_user.role.name != "admin":
         return redirect(url_for('index'))
     changes = request.get_json(force=True)
-    print(changes)
     product = db.session.scalar(sa.select(Product).where(Product.id == product_id))
 
     if changes["name"] != "":
-        product.name = changes["name"]
+        other_product = db.session.scalar(sa.select(Product).where(Product.name == changes["name"]))
+        if other_product is None: # Make sure product name isn't already taken
+            product.name = changes["name"]
+        else:
+            return "Product Name Already Taken"
 
     if changes["type"] != "":
         product.product_type = db.session.scalar(sa.select(ProductType).where(ProductType.name == changes["type"]))
@@ -272,6 +285,7 @@ def product_changes(product_id):
     flash('Product detail changes')
     return "success"
 
+
 @app.route('/product/<product_id>/delete', methods=['POST', 'GET'])
 @login_required
 def delete_product(product_id):
@@ -281,6 +295,7 @@ def delete_product(product_id):
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for('inventory'))
+
 
 # Accounts
 @app.route('/accounts')
@@ -336,6 +351,7 @@ def accounts_admin():
     users = db.session.scalars(sa.select(User).where(User.role.has(Role.name == 'admin'))).all()
     return render_template('accounts.html', title='Accounts', users=users)
 
+
 @app.route('/account/<user_id>')
 @login_required
 def account(user_id):
@@ -351,16 +367,59 @@ def account(user_id):
 
     return render_template('account.html', title=f"{user.fullname}'s account", user=user, roles=roles)
 
-@app.route('/account/<user_id>/change-role', methods=['POST'])
+
+@app.route('/account/<user_id>/changes', methods=['POST'])
 @login_required
-def account_change_role(user_id):
-    role = request.get_json(force=True)
-    if role:
-        user = db.session.scalar(sa.select(User).where(User.id == user_id))
-        user.role = db.session.scalar(sa.select(Role).where(Role.name == role['name']))
-        db.session.commit()
-        flash('Role changed')
-        return "success"
+def account_changes(user_id):
+    if current_user.role.name != "admin":
+        return redirect(url_for('index'))
+    changes = request.get_json(force=True)
+    user = db.session.scalar(sa.select(User).where(User.id == user_id))
+
+    if changes["fullname"] != "":
+        user.fullname = changes["fullname"]
+
+    if changes["username"] != "":
+        other_user = db.session.scalar(sa.select(User).where(User.login.has(Login.username == changes["username"])))
+        if other_user is None: # Make sure username isn't already taken
+            user.login.username = changes["username"]
+        else:
+            return "Username Already Taken"
+
+    if changes["role"] != "":
+        user.role = db.session.scalar(sa.select(Role).where(Role.name == changes["role"]))
+
+    if changes["phone"] != "":
+        other_user = db.session.scalar(sa.select(User).where(User.phone == changes["phone"]))
+        if other_user is None: # Make sure phone number isn't already taken
+            if len(changes["phone"]) == 11:
+                user.phone = changes["phone"]
+            else:
+                return "Invalid Phone Number"
+        else:
+            return "Phone Number is Already Taken"
+
+    if changes["email"] != "":
+        user.email = changes["email"]
+
+    if changes["birthday"] != "":
+        user.birthday = datetime.strptime(changes["birthday"], "%Y-%m-%d")
+
+    db.session.commit()
+    flash('Account detail changes')
+    return "success"
+
+
+@app.route('/account/<user_id>/delete', methods=['POST', 'GET'])
+@login_required
+def delete_account(user_id):
+    if current_user.role.name != "admin":
+        return redirect(url_for('index'))
+    user = db.session.scalar(sa.select(User).where(User.id == user_id))
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('accounts'))
+
 
 @app.route('/register_admin', methods=['GET', 'POST'])
 def register_admin():

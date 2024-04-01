@@ -88,7 +88,11 @@
                     // Refresh the page
                     location.reload()
                 }else{
-                    alert("Changes Unsuccessful")
+                    if (this.responseText){
+                        alert(this.responseText)
+                    }else{
+                        alert("Changes Failed")
+                    }
                 }
             }
         }else{
@@ -110,7 +114,6 @@
         $("#save-changes").addClass('hidden')
         $("#edit-details").removeClass('hidden')
     })
-
 
     $("#delete-product").on('click', function(){
         if (confirm("Are you sure?")){
