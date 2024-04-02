@@ -8,45 +8,129 @@
     .hidden {
         display:none;
     }
+    .container{
+        margin-top: 50px;
+        text-align: center;
+    }
+    .heading1{
+        padding-left: 80px;
+        font-weight: bold;
+        font-style: italic;
+        padding-top: 40px;
+        color: #A60000;
+        margin-bottom: 20px;
+        font-size: 60px;
+    }
+    .components{
+        margin-left: 375px;
+        width: 620px;
+        text-align: center;
+        background: #F7E4E4;
+        padding: 60px;
+        border-radius: 30px;
+        font-size: 18px;
+        margin-bottom: 90px;
+    }
+    .labels{
+        font-weight: bold;
+        font-size: 20px;
+        padding-right: 5px;
+    }
+    .textboxes{
+        border: none;
+        margin-left: 10px;
+        padding-left: 10px;
+    }
+    .button{
+       margin-top: 50px;
+       background-color: #B33A3A;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       padding: 8px 20px;
+       border: none;
+       font-size: 18px;
+       width: 157px;
+    }
+    .button:hover{
+        background-color: grey;
+    }
+    .button2{
+       margin-top: 50px;
+       background-color: #008E0E;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       padding: 8px 20px;
+       border: none;
+       font-size: 18px;
+       width: 157px;
+    }
+    .button2:hover{
+        background-color: grey;
+    }
+    .button3{
+       margin-top: 40px;
+       background-color: white;
+       border-radius: 100px;
+       font-style: italic;
+       color: black;
+       border: none;
+       font-weight: bold;
+       padding: 8px 20px;
+       font-size: 18px;
+       width: 157px;
+    }
+    .button3:hover{
+        background-color: grey;
+        color: white;
+    }
 </style>
-<button id="edit-details">Edit Details</button>
 
-<h2>{{ user.fullname }}'s Account</h2>
-<p><b>Full Name:</b> {{ user.fullname }}
-    <input type="text" id="change-fullname" class="hidden" placeholder="New Fullname">
-</p>
+<div class="container">
+    <h1 class="heading1">{{ user.fullname }}'s Account</h1>
+    <div class="components">
+        <p><b class="labels">Full Name: </b> {{ user.fullname }}
+            <input type="text" id="change-fullname" class="hidden textboxes" placeholder="New Fullname">
+        </p>
 
-<p><b>Username:</b> {{ user.login.username }}
-    <input type="text" id="change-username" class="hidden" placeholder="New Username">
-</p>
+        <p><b class="labels">Username:</b> {{ user.login.username }}
+            <input type="text" id="change-username" class="hidden textboxes" placeholder="New Username">
+        </p>
 
-<p><b>Role:</b> {{ user.role.name }}
-    <select id="change-role" class="hidden">
-        <option></option>
-        {% for role in roles %}
-        <option>{{ role.name }}</option>
-        {% endfor %}
-    </select>
-</p>
+        <p><b class="labels">Role:</b> {{ user.role.name }}
+            <select id="change-role" class="hidden textboxes">
+                <option></option>
+                {% for role in roles %}
+                <option>{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
 
-<p><b>Phone Number:</b> {{ user.phone }}
-    <input type="text" id="change-phone" class="hidden" placeholder="New Phone Number">
-</p>
+        <p><b class="labels">Phone Number:</b> {{ user.phone }}
+            <input type="text" id="change-phone" class="hidden textboxes" placeholder="New Phone Number">
+        </p>
 
-<p><b>Email:</b> {% if user.email %}{{ user.email }}{% else %}N/A{% endif%}
-    <input type="text" id="change-email" class="hidden" placeholder="New Email">
-</p>
+        <p><b class="labels">Email:</b> {% if user.email %}{{ user.email }}{% else %}N/A{% endif%}
+            <input type="text" id="change-email" class="hidden textboxes" placeholder="New Email">
+        </p>
 
-<p><b>Age:</b> {{ user.get_age() }}, <b>Birthday:</b> {{ user.get_birthday() }}
-    <input type="date" id="change-birthday" class="hidden" placeholder="New Birthdate">
-</p>
-<p><b>Date Created:</b> {{ user.get_date_created() }}</p>
+        <p><b class="labels">Birthday:</b> {{ user.get_birthday() }} ({{ user.get_age() }} y.o.)
+            <input type="date" id="change-birthday" class="hidden textboxes" placeholder="New Birthdate">
+        </p>
+        <p><b class="labels">Date Created:</b> {{ user.get_date_created() }}</p>
 
-<button id="save-changes" class="hidden">Save Changes</button>
-<button id="cancel-changes" class="hidden">Cancel</button>
-{% if current_user.id != user.id %}
-<button id="delete-account">Delete Account</button>
-{% endif %}
+        {% if current_user.id != user.id %}
+        <button id="delete-account" class="button" style="margin-right: 20px;">Delete Account</button>
+        {% endif %}
+        <button id="edit-details" class="button2">Edit Details</button>
+
+        <button id="save-changes" class="hidden button2">Save Changes</button>
+        <div><button id="cancel-changes" class="hidden button3">Cancel</button></div>
+    </div>
+</div>
+
+
 
 <script>
     $('#edit-details').on('click', function(){
