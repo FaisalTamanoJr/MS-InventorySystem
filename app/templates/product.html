@@ -8,38 +8,142 @@
     .hidden {
         display:none;
     }
+    .hidden {
+        display:none;
+    }
+    .container{
+        margin-top: 50px;
+        text-align: center;
+    }
+    .heading1{
+        padding-left: 80px;
+        font-weight: bold;
+        font-style: italic;
+        padding-top: 40px;
+        color: #A60000;
+        margin-bottom: 20px;
+        font-size: 60px;
+    }
+    .heading2{
+        padding-left: 80px;
+        font-weight: bold;
+        padding-top: 10px;
+        margin-bottom: 10px;
+        font-size: 50px;
+    }
+    .components{
+        margin-left: 375px;
+        width: 620px;
+        text-align: center;
+        background: #F7E4E4;
+        padding: 60px;
+        border-radius: 30px;
+        font-size: 18px;
+        margin-bottom: 90px;
+    }
+    .labels{
+        font-weight: bold;
+        font-size: 20px;
+        padding-right: 5px;
+    }
+    .textboxes{
+        border: none;
+        margin-left: 10px;
+        padding-left: 10px;
+    }
+    .button{
+       margin-top: 50px;
+       background-color: #B33A3A;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       padding: 8px 20px;
+       border: none;
+       font-size: 18px;
+       width: 157px;
+    }
+    .button:hover{
+        background-color: grey;
+    }
+    .button2{
+       margin-top: 50px;
+       background-color: #008E0E;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       padding: 8px 20px;
+       border: none;
+       font-size: 18px;
+       width: 157px;
+    }
+    .button2:hover{
+        background-color: grey;
+    }
+    .button3{
+       margin-top: 40px;
+       background-color: white;
+       border-radius: 100px;
+       font-style: italic;
+       color: black;
+       border: none;
+       font-weight: bold;
+       padding: 8px 20px;
+       font-size: 18px;
+       width: 157px;
+    }
+    .button3:hover{
+        background-color: grey;
+        color: white;
+    }
+    .name-links{
+        text-decoration: none;
+        color: #B33A3A;
+        font-style: italic;
+        padding: 10px;
+        font-weight: bold;
+    }
+    .name-links:hover{
+        background-color: grey;
+        padding: 10px;
+        border-radius: 100px;
+        color: white;
+    }
 </style>
+<div class="container">
+    <h1 class="heading1">PRODUCT DETAILS</h1>
+    <h3 class="heading2">{{ product.name }}</h3>
+    <div class="components">
+        <p><b class="labels">Name: </b> {{ product.name }}
+            <input type="text" id="change-name" class="hidden textboxes" placeholder="New Name">
+        </p>
 
-<h2>{{ product.name }}</h2>
-<button id="edit-details">Edit Details</button>
+        <p><b class="labels">Type:</b> {{ product.product_type.name }}
+            <select id="change-type" class="hidden textboxes">
+                <option></option>
+                {% for product_type in product_types %}
+                <option>{{ product_type.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
 
-<p><b>Name:</b> {{ product.name }}
-    <input type="text" id="change-name" class="hidden" placeholder="New Name">
-</p>
+        <p><b class="labels">Price:</b> {{ product.get_price() }}
+            <input type="text" id="change-price" class="hidden textboxes" placeholder="New Price">
+        </p>
 
-<p><b>Type:</b> {{ product.product_type.name }}
-    <select id="change-type" class="hidden">
-        <option></option>
-        {% for product_type in product_types %}
-        <option>{{ product_type.name }}</option>
-        {% endfor %}
-    </select>
-</p>
+        <p><b class="labels">Stocks:</b> {{ product.stock.quantity }}
+            <input type="text" id="update-stock" class="hidden textboxes" placeholder="New Stock Amount">
+        </p>
 
-<p><b>Price:</b> {{ product.get_price() }}
-    <input type="text" id="change-price" class="hidden" placeholder="New Price">
-</p>
+        <p><b class="labels">Last Updated:</b> {{ product.stock.get_last_updated() }}</p>
+        <p><b class="labels" style="padding-right: 0px;">Added by:</b> <a href="{{ url_for('account', user_id=product.user.id) }}" class="name-links">{{ product.user.fullname }}</a></p>
 
-<p><b>Stocks:</b> {{ product.stock.quantity }}
-    <input type="text" id="update-stock" class="hidden" placeholder="New Stock Amount">
-</p>
+        <button id="delete-product" class="button" style="margin-right: 20px;">Delete Product</button>
+        <button id="edit-details" class="button2">Edit Details</button>
+        <button id="save-changes" class="hidden button2">Save Changes</button>
+        <div><button id="cancel-changes" class="hidden button3">Cancel</button></div>
 
-<p><b>Last Updated:</b> {{ product.stock.get_last_updated() }}</p>
-<p><b>Added by:</b> <a href="{{ url_for('account', user_id=product.user.id) }}">{{ product.user.fullname }}</a></p>
-
-<button id="save-changes" class="hidden">Save Changes</button>
-<button id="cancel-changes" class="hidden">Cancel</button>
-<button id="delete-product">Delete Product</button>
+    </div>
+</div>
 
 <script>
     $('#edit-details').on('click', function(){

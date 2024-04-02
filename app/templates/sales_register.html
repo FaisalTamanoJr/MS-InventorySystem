@@ -22,338 +22,376 @@
         overflow-y: auto;
         overflow-x: hidden;
     }
+
+    .register .heading1{
+        position: relative;
+        padding-left: 80px;
+        font-weight: bold;
+        font-style: italic;
+        padding-top: 40px;
+        font-size: 60px;
+        color: #A60000;
+    }
+    .register .components{
+        position: relative;
+        text-align: center;
+        background: #F7E4E4;
+        padding: 60px;
+        margin-left: 30px;
+        margin-right: 80px;
+        border-radius: 30px;
+    }
+    .button{
+       background-color: #008E0E;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       border: none;
+       width: 100px;
+    }
+    .button:hover{
+        background-color: grey;
+    }
+    .input{
+        border-radius: 30px;
+    }
 </style>
-
-<h1>Order</h1>
-
-<label>Item: </label>
-<select id="order-product">
-    <option data-price=""></option>
-    {% for product in products %}
-    <option data-price="{{ product.price }}">{{ product.name }}</option>
-    {% endfor %}
-</select>
-<label>Amount: </label><input type="text" id="order-quantity">
-<button id="add-order">+</button>
-
-<h1>Transaction</h1>
-
-<label>Method of Payment</label><br>
-<select id="payment-method">
-    <option></option>
-    {% for payment_method in payment_methods %}
-    <option>{{ payment_method.name }}</option>
-    {% endfor %}
-</select>
-
-<label class="gcash-ref hidden"><p>Reference no.</p></label>
-<p><input type="text" class="gcash-ref hidden" id="gcash-ref-no"></p>
-
-<label><b>Apply Senior Discount?</b></label><br>
-<label>Senior Citizen Name</label>
-<p><input type="text" id="senior-name"></p>
-<label>ID No.</label>
-<p><input type="text" id="senior-id"></p>
-
-    <table>
-        <thead>
-        <tr>
-            <th scope="col"></td>
-            <th scope="col">Item</td>
-            <th scope="col">No. of Orders</td>
-            <th scope="col">Amount</td>
-        </tr>
-        </thead>
-        <tbody id="transactions-table">
-
-        </tbody>
-        <tr>
-            <td></td>
-            <td><b>TOTAL = </b></td>
-            <td id="total-quantity"></td>
-            <td id="total-amount"></td>
-        </tr>
-    </table><br>
-
-<button id="delete-products">Delete</button>
-<button id="process-transactions">Process</button>
-
-<h1>Processed Transactions</h1>
-<p id="date-and-time"></p>
-<table id="p_transactions_table">
-    <thead class="p_transactions">
-    <tr class="p_transactions">
-        <th scope="col">Time</td>
-        <th scope="col">Item</td>
-        <th scope="col">MOP</td>
-        <th scope="col">No. of Orders</td>
-        <th scope="col">Amount</td>
-    </tr>
-    </thead>
-    <tbody class="p_transactions" id="p_transactions_body">
-        {% for transaction in processed_transactions %}
-            {% for order in transaction.orders %}
-            <tr>
-                <td>{{ transaction.time }}</td>
-                <td>{{ order.product }}</td>
-                <td>{{ transaction.transaction_type }}</td>
-                <td>{{ order.quantity }}</td>
-                <td>{{ order.total_price }}</td>
-            </tr>
+<div class="register">
+    <h1 class="heading1">Order</h1>
+    <div class="components" style="font-size: 30px;">
+        <label>ITEM </label>
+        <select id="order-product" class="input">
+            <option data-price=""></option>
+            {% for product in products %}
+            <option data-price="{{ product.price }}">{{ product.name }}</option>
             {% endfor %}
-        {% endfor %}
-        <tr>
-            <td></td>
-            <td></td>
-            <td><b>TOTAL = </b></td>
-            <td>{{ total_quantity }}</td>
-            <td>{{ total_paid }}</td>
-        </tr>
-    </tbody>
-</table>
+        </select>
+        <label style="padding-left: 50px;">QUANTITY </label><input type="text" id="order-quantity" class="input">
+        <button class="button" id="add-order" style="margin-left: 50px;"><b>+</b></button>
+    </div>
+
+    <h1 class="heading1">Transaction</h1>
+
+    <div class="components">
+        <label>Method of Payment</label><br>
+        <select id="payment-method" class="input">
+            <option></option>
+            {% for payment_method in payment_methods %}
+            <option>{{ payment_method.name }}</option>
+            {% endfor %}
+        </select>
+
+        <br><label class="gcash-ref hidden"><p>Reference no.</p></label>
+        <input type="text" class="gcash-ref hidden input" id="gcash-ref-no"><br>
+
+        <label><b>Apply Senior Discount?</b></label><br>
+        <label>Senior Citizen Name</label>
+        <p><input type="text" id="senior-name" class="input"></p>
+        <label>ID No.</label>
+        <p><input type="text" id="senior-id" class="input"></p>
+        <h2 style="color: white;">------------------------------------------------------------------------------------------</h2>
+            <table>
+            <thead>
+            <tr>
+                <th scope="col"></td>
+                <th scope="col">Item</td>
+                <th scope="col">No. of Orders</td>
+                <th scope="col">Amount</td>
+            </tr>
+            </thead>
+            <tbody id="transactions-table">
+            </tbody>
+            <tr>
+                <td></td>
+                <td><b>TOTAL = </b></td>
+                <td id="total-quantity"></td>
+                <td id="total-amount"></td>
+            </tr>
+        </table><br>
+
+        <button id="delete-products" class="button">Delete</button>
+        <button id="process-transactions" class="button">Process</button>
+    </div>
+
+    <h1 class="heading1">Processed Transactions</h1>
+    <div class="components" style="margin-bottom: 40px;">
+        <p id="date-and-time"></p>
+        <table id="p_transactions_table">
+            <thead class="p_transactions">
+            <tr class="p_transactions">
+                <th scope="col">Time</td>
+                <th scope="col">Item</td>
+                <th scope="col">MOP</td>
+                <th scope="col">No. of Orders</td>
+                <th scope="col">Amount</td>
+            </tr>
+            </thead>
+            <tbody class="p_transactions" id="p_transactions_body">
+                {% for transaction in processed_transactions %}
+                    {% for order in transaction.orders %}
+                    <tr>
+                        <td>{{ transaction.time }}</td>
+                        <td>{{ order.product }}</td>
+                        <td>{{ transaction.transaction_type }}</td>
+                        <td>{{ order.quantity }}</td>
+                        <td>{{ order.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>TOTAL = </b></td>
+                    <td>{{ total_quantity }}</td>
+                    <td>{{ total_paid }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <script>
     // Processed transactions table design and table design
-    var $table = $('#p_transactions_table'),
-    $bodyCells = $table.find('tbody.p_transactions tr:first').children(),
-    colWidth
+        var $table = $('#p_transactions_table'),
+        $bodyCells = $table.find('tbody.p_transactions tr:first').children(),
+        colWidth
 
-    colWidth = $bodyCells.map(function() {
-        return $(this).width()
-    }).get()
+        colWidth = $bodyCells.map(function() {
+            return $(this).width()
+        }).get()
 
-    $table.find('thead tr').children().each(function(i, v) {
-        $(v).width(colWidth[i])
-    })
+        $table.find('thead tr').children().each(function(i, v) {
+            $(v).width(colWidth[i])
+        })
 
-    // Date and time for transactions table.
-    var dateAndTimeDisplay = document.getElementById("date-and-time")
+        // Date and time for transactions table.
+        var dateAndTimeDisplay = document.getElementById("date-and-time")
 
-    function refreshDateAndTime() {
-        var date = new Date().toDateString("en-US", {timeZone: "Asia/Manila"})
-        var time = new Date().toLocaleTimeString("en-US", {timeZone: "Asia/Manila"})
-        dateAndTimeDisplay.innerHTML = "<b>Date: </b>".concat(date, " <b>Time:</b> ", time);
-    }
+        function refreshDateAndTime() {
+            var date = new Date().toDateString("en-US", {timeZone: "Asia/Manila"})
+            var time = new Date().toLocaleTimeString("en-US", {timeZone: "Asia/Manila"})
+            dateAndTimeDisplay.innerHTML = "<b>Date: </b>".concat(date, " <b>Time:</b> ", time);
+        }
 
-    setInterval(refreshDateAndTime, 1000)
+        setInterval(refreshDateAndTime, 1000)
 
     // Transactions and orders
 
-    var orders = []
+        var orders = []
 
-    $('#payment-method').on('change', function(){
-        if ($(this).val() == "GCash"){
-            $('.gcash-ref').removeClass('hidden')
-        }else{
-            $('.gcash-ref').addClass('hidden')
-        }
-    })
-
-    $('#senior-name').on('change', function(){
-        compute_total()
-    })
-
-    $('#senior-id').on('change', function(){
-        compute_total()
-    })
-
-    $('#delete-products').on('click', function(){
-        for (let i = 0; i < orders.length; i++){
-            var order_id = orders[i].id
-            if ($(`#delete-${order_id}`).is(':checked')){
-                $(`.transaction_row-${order_id}`).remove()
-                orders.splice(i,1)
-                i -= 1
+        $('#payment-method').on('change', function(){
+            if ($(this).val() == "GCash"){
+                $('.gcash-ref').removeClass('hidden')
+            }else{
+                $('.gcash-ref').addClass('hidden')
             }
-        }
-        compute_total()
-    })
+        })
 
-    $('#process-transactions').on('click', function(){
-        var gcash_ref_no = $('#gcash-ref-no').val()
-        var no_senior_name = ($('#senior-name').val() == "")
-        var no_senior_id = ($('#senior-id').val() == "")
+        $('#senior-name').on('change', function(){
+            compute_total()
+        })
 
-        if (orders.length == 0){
-            alert("No orders were added.")
-            return
-        }
-        if ($('#payment-method').val() == ''){
-            alert('Select a payment method.')
-        }else{
+        $('#senior-id').on('change', function(){
+            compute_total()
+        })
 
-            // GCash Payment
-            if ($('#payment-method').val() == 'GCash'){
-                // Invalid
-                if (gcash_ref_no == ""){
-                    alert("Missing GCash reference number.")
+        $('#delete-products').on('click', function(){
+            for (let i = 0; i < orders.length; i++){
+                var order_id = orders[i].id
+                if ($(`#delete-${order_id}`).is(':checked')){
+                    $(`.transaction_row-${order_id}`).remove()
+                    orders.splice(i,1)
+                    i -= 1
+                }
+            }
+            compute_total()
+        })
+
+        $('#process-transactions').on('click', function(){
+            var gcash_ref_no = $('#gcash-ref-no').val()
+            var no_senior_name = ($('#senior-name').val() == "")
+            var no_senior_id = ($('#senior-id').val() == "")
+
+            if (orders.length == 0){
+                alert("No orders were added.")
+                return
+            }
+            if ($('#payment-method').val() == ''){
+                alert('Select a payment method.')
+            }else{
+
+                // GCash Payment
+                if ($('#payment-method').val() == 'GCash'){
+                    // Invalid
+                    if (gcash_ref_no == ""){
+                        alert("Missing GCash reference number.")
+                        return
+                    }
+                    if (no_senior_name !== no_senior_id){
+                        alert("Invalid senior citizen details")
+                        return
+                    }
+
+                    // Valid (no senior discount or with senior discount)
+                    else if (!no_senior_name && !no_senior_id){
+                        var senior_details = {'senior_name':$('#senior-name').val(), 'senior_id':$('#senior-id').val()}
+                        process_transaction({t_type : "GCash", gcash_reference_no : gcash_ref_no, senior_discount_details : senior_details})
+                        return
+                    }
+                    process_transaction({t_type : "GCash", gcash_reference_no : gcash_ref_no})
                     return
                 }
+
+                // Cash Payment
+                // Invalid Payment
                 if (no_senior_name !== no_senior_id){
                     alert("Invalid senior citizen details")
                     return
                 }
 
-                // Valid (no senior discount or with senior discount)
+                // Valid Payments
                 else if (!no_senior_name && !no_senior_id){
                     var senior_details = {'senior_name':$('#senior-name').val(), 'senior_id':$('#senior-id').val()}
-                    process_transaction({t_type : "GCash", gcash_reference_no : gcash_ref_no, senior_discount_details : senior_details})
+                    process_transaction({senior_discount_details : senior_details})
                     return
                 }
-                process_transaction({t_type : "GCash", gcash_reference_no : gcash_ref_no})
-                return
+                process_transaction()
+            }
+        })
+
+        function process_transaction({t_type="Cash", gcash_reference_no=null, senior_discount_details=null} = {}){
+            // Total price
+            var total_amount = 0
+            for (let i = 0; i < orders.length; i++){
+                total_amount += orders[i].total_price
             }
 
-            // Cash Payment
-            // Invalid Payment
-            if (no_senior_name !== no_senior_id){
-                alert("Invalid senior citizen details")
-                return
-            }
+            var transaction = {}
 
-            // Valid Payments
-            else if (!no_senior_name && !no_senior_id){
-                var senior_details = {'senior_name':$('#senior-name').val(), 'senior_id':$('#senior-id').val()}
-                process_transaction({senior_discount_details : senior_details})
-                return
+            // Create the data that we will send to the python backend for processing.
+            if (senior_discount_details){ // If senior discount was applied
+                let discounted_price = total_amount - (total_amount * {{ discount }})
+                transaction = {
+                    "total_amount_paid" : discounted_price,
+                    "senior_citizen_name" : senior_discount_details.senior_name,
+                    "senior_citizen_id" : senior_discount_details.senior_id,
+                    "gcash_ref_no" : gcash_reference_no,
+                    "transaction_type" : t_type,
+                    "orders" : orders
+                }
+            } else {
+                transaction = {
+                    "total_amount_paid" : total_amount,
+                    "senior_citizen_name" : null,
+                    "senior_citizen_id" : null,
+                    "gcash_ref_no" : gcash_reference_no,
+                    "transaction_type" : t_type,
+                    "orders" : orders
+                }
             }
-            process_transaction()
-        }
-    })
-
-    function process_transaction({t_type="Cash", gcash_reference_no=null, senior_discount_details=null} = {}){
-        // Total price
-        var total_amount = 0
-        for (let i = 0; i < orders.length; i++){
-            total_amount += orders[i].total_price
-        }
-
-        var transaction = {}
-
-        // Create the data that we will send to the python backend for processing.
-        if (senior_discount_details){ // If senior discount was applied
-            let discounted_price = total_amount - (total_amount * {{ discount }})
-            transaction = {
-                "total_amount_paid" : discounted_price,
-                "senior_citizen_name" : senior_discount_details.senior_name,
-                "senior_citizen_id" : senior_discount_details.senior_id,
-                "gcash_ref_no" : gcash_reference_no,
-                "transaction_type" : t_type,
-                "orders" : orders
-            }
-        } else {
-            transaction = {
-                "total_amount_paid" : total_amount,
-                "senior_citizen_name" : null,
-                "senior_citizen_id" : null,
-                "gcash_ref_no" : gcash_reference_no,
-                "transaction_type" : t_type,
-                "orders" : orders
-            }
-        }
 
         // Send the transaction to the python backend
-        var xml = new XMLHttpRequest()
-        xml.open("POST","{{ url_for('process_transaction') }}", true)
-        xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xml.send(JSON.stringify(transaction))
+            var xml = new XMLHttpRequest()
+            xml.open("POST","{{ url_for('process_transaction') }}", true)
+            xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xml.send(JSON.stringify(transaction))
 
         // if not enough stocks, alert the user and prevent the transaction from processing
-        xml.onload = function(){
-            if (this.responseText == "success"){
-                // Reset everything
-                orders = []
-                $('#transactions-table').empty()
-                $('#payment-method').val('')
-                $('#gcash-ref-no').val('')
-                $('#senior-name').val('')
-                $('#senior-id').val('')
+            xml.onload = function(){
+                if (this.responseText == "success"){
+                    // Reset everything
+                    orders = []
+                    $('#transactions-table').empty()
+                    $('#payment-method').val('')
+                    $('#gcash-ref-no').val('')
+                    $('#senior-name').val('')
+                    $('#senior-id').val('')
 
-                compute_total()
+                    compute_total()
 
-                // Refresh page
-                location.reload()
-            }else{
-                error_message = "Not enough ".concat(this.responseText, " stocks.")
-                alert(error_message)
+                    // Refresh page
+                    location.reload()
+                }else{
+                    error_message = "Not enough ".concat(this.responseText, " stocks.")
+                    alert(error_message)
+                }
             }
         }
-    }
 
-    function compute_total(){
-        var total_quantity = 0
-        var total_amount = 0
+        function compute_total(){
+            var total_quantity = 0
+            var total_amount = 0
 
-        // Compute for the total price and quantity
-        for (let i = 0; i < orders.length; i++){
-            total_quantity += orders[i].quantity
-            total_amount += orders[i].total_price
-        }
+            // Compute for the total price and quantity
+            for (let i = 0; i < orders.length; i++){
+                total_quantity += orders[i].quantity
+                total_amount += orders[i].total_price
+            }
 
-        // If discount:
-        var no_senior_name = ($('#senior-name').val() == "")
-        var no_senior_id = ($('#senior-id').val() == "")
-        if (!no_senior_name && !no_senior_id){
+            // If discount:
+            var no_senior_name = ($('#senior-name').val() == "")
+            var no_senior_id = ($('#senior-id').val() == "")
+            if (!no_senior_name && !no_senior_id){
+                document.getElementById('total-quantity').innerHTML = total_quantity
+                let discounted_price = total_amount - (total_amount * {{ discount }})
+                document.getElementById('total-amount').innerHTML = "".concat(discounted_price, " ({{ discount }} Discount)")
+                return
+            }
+
             document.getElementById('total-quantity').innerHTML = total_quantity
-            let discounted_price = total_amount - (total_amount * {{ discount }})
-            document.getElementById('total-amount').innerHTML = "".concat(discounted_price, " ({{ discount }} Discount)")
-            return
+            document.getElementById('total-amount').innerHTML = total_amount
         }
 
-        document.getElementById('total-quantity').innerHTML = total_quantity
-        document.getElementById('total-amount').innerHTML = total_amount
-    }
+        var newId = 0
+        var order = {'id': newId, 'product': null, 'quantity': null, 'total_price': null, 'price': null}
 
-    var newId = 0
-    var order = {'id': newId, 'product': null, 'quantity': null, 'total_price': null, 'price': null}
+        $('#order-product').on('change', function(){
+            order.product = $(this).val()
+            order.price = parseFloat($(this).find(':selected').data('price')).toFixed(2)
+        })
 
-    $('#order-product').on('change', function(){
-        order.product = $(this).val()
-        order.price = parseFloat($(this).find(':selected').data('price')).toFixed(2)
-    })
+        $('#order-quantity').on('change', function(){
+            order.quantity = parseInt($(this).val())
+        })
 
-    $('#order-quantity').on('change', function(){
-        order.quantity = parseInt($(this).val())
-    })
+        $('#add-order').on('click', function(){
+            if(order.product == null){
+                alert('No product selected.')
+            }else if (order.quantity == null){
+                alert('Specify an number of orders.')
+            }else if (order.quantity <= 0){
+                alert('Must be a whole number.')
+            }else{
+                order.total_price = order.price * order.quantity
+                addOrder(order)
+                $('#order-product').val('')
+                $('#order-quantity').val('')
+                order.id = newId
+                order.product = null
+                order.quantity = null
+                order.total_price = null
+                order.price = null
+            }
+            compute_total()
+        })
 
-    $('#add-order').on('click', function(){
-        if(order.product == null){
-            alert('No product selected.')
-        }else if (order.quantity == null){
-            alert('Specify an number of orders.')
-        }else if (order.quantity <= 0){
-            alert('Must be a whole number.')
-        }else{
-            order.total_price = order.price * order.quantity
-            addOrder(order)
-            $('#order-product').val('')
-            $('#order-quantity').val('')
-            order.id = newId
-            order.product = null
-            order.quantity = null
-            order.total_price = null
-            order.price = null
+        function addOrder(obj){
+            orders.push({'id': obj.id, 'product': obj.product, 'quantity': obj.quantity, 'total_price': obj.total_price, 'price': obj.price})
+            newId += 1
+            var row = `<tr scope="row" class="transaction_row-${obj.id}">
+                            <td >
+                                <input type="checkbox" id="delete-${obj.id}">
+                            </td>
+                            <td id=order-${obj.id}>${obj.product}</td>
+                            <td id="quantity-${obj.id}">${obj.quantity}</td>
+                            <td id="total-price-${obj.id}">${obj.total_price}</td>
+                       </tr>`
+            $('#transactions-table').append(row)
         }
-        compute_total()
-    })
 
-    function addOrder(obj){
-        orders.push({'id': obj.id, 'product': obj.product, 'quantity': obj.quantity, 'total_price': obj.total_price, 'price': obj.price})
-        newId += 1
-        var row = `<tr scope="row" class="transaction_row-${obj.id}">
-                        <td >
-                            <input type="checkbox" id="delete-${obj.id}">
-                        </td>
-                        <td id=order-${obj.id}>${obj.product}</td>
-                        <td id="quantity-${obj.id}">${obj.quantity}</td>
-                        <td id="total-price-${obj.id}">${obj.total_price}</td>
-                   </tr>`
-        $('#transactions-table').append(row)
-    }
-
-    function changeDeleteStatus(obj){
-        pass
-    }
+        function changeDeleteStatus(obj){
+            pass
+        }
 
 </script>
 {% endblock %}

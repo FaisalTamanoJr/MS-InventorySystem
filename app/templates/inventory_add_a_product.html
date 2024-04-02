@@ -5,8 +5,40 @@
     {% else %}
     <title>MS-InventorySystem</title>
     {% endif %}
+
+    <style>
+        .container{
+            margin-top: 70px;
+            text-align: center;
+            margin-bottom: 70px;
+        }
+        .heading1{
+            font-weight: bold;
+            font-style: italic;
+            padding-top: 70px;
+            font-size: 40px;
+            color: white;
+        }
+        .components{
+            font-size: 18px;
+            margin-top: 40px;
+        }
+        .button{
+           background-color: #B33A3A;
+           border-radius: 40px;
+           font-style: italic;
+           color: white;
+           border: none;
+           padding: 8px 20px;
+           font-size: 18px;
+           margin-top: 20px;
+        }
+        .button:hover{
+            background-color: grey;
+        }
+    </style>
 </head>
-<body>
+<body style="background-color: #0d0d0d;">
 
 <!-- bootstrap for tables design - edit if other design is preferred -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
@@ -17,38 +49,45 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
 
-<h1>Add a Product</h1>
-<form action="" method="post" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.name.label }}<br>
-        {{ form.name(size=32) }}<br>
-        {% for error in form.name.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.type.label }}<br>
-        {{ form.type }}<br>
-        {% for error in form.type.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.price.label }}<br>
-        {{ form.price }}<br>
-        {% for error in form.price.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.stock.label }}<br>
-        {{ form.stock }}<br>
-        {% for error in form.stock.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-</form>
+<div class="container">
+    <div class="form-control-sm" style="text-align: center;"> <img src="https://4.bp.blogspot.com/-FjLcphEXLSI/WG0AeOhfdbI/AAAAAAAAE1A/jhqkNGX4qD4E93qw0thbHzrB0npLiE5rACLcB/s1600/master%2Bsiomai.png" width="602.88" height="157.44" alt="master siomai logo"></div>
+    <div class="heading1">Adding a Product...</div>
+    <div class="components">
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.name.label(style='color: white;') }}<br>
+                {{ form.name(size=32, style='width: 303.111; padding-left: 10px;') }}<br>
+                {% for error in form.name.errors %}
+                <span style="color: red; font-style: italic;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.type.label(style='color: white;') }}<br>
+                {{ form.type(style='width: 303.111; padding-left: 10px;') }}<br>
+                {% for error in form.type.errors %}
+                <span style="color: red; font-style: italic;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.price.label(style='color: white;') }}<br>
+                {{ form.price(style='width: 303.111; padding-left: 10px;') }}<br>
+                {% for error in form.price.errors %}
+                <span style="color: red; font-style: italic;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.stock.label(style='color: white;') }}<br>
+                {{ form.stock(style='width: 303.111; padding-left: 10px;') }}<br>
+                {% for error in form.stock.errors %}
+                <span style="color: red; font-style: italic;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit(class="button") }}</p>
+        </form>
+    </div>
+
+</div>
+
 </body>
 </html>

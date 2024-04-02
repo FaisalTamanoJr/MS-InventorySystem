@@ -57,49 +57,49 @@
             {{ form.fullname.label(class='labels') }}<br>
             {{ form.fullname(size=32, class='textboxes') }}<br>
             {% for error in form.fullname.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.phone.label(class='labels') }}<br>
             {{ form.phone(size=32, class='textboxes') }}<br>
             {% for error in form.phone.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.email.label(class='labels') }}<br>
             {{ form.email(size=32, class='textboxes') }}<br>
             {% for error in form.email.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.birthday.label(class='labels') }}<br>
             {{ form.birthday(class='datepicker', class='textboxes') }}<br>
             {% for error in form.birthday.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.role.label(class='labels') }}<br>
             {{ form.role(class='textboxes', style='text-align: center;') }}<br>
             {% for error in form.role.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.username.label(class='labels') }}<br>
             {{ form.username(size=32, class='textboxes') }}<br>
             {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.password.label(class='labels') }}<br>
             {{ form.password(size=32, class='textboxes') }}<br>
             {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red; font-style: italic;">{{ error }}</span>
             {% endfor %}
         </p>
         <p style="margin-top: 30px; margin-bottom: 0px;">{{ form.submit(class='button') }}</p>

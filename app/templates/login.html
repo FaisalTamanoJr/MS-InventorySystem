@@ -39,14 +39,14 @@
                         {{ form.username.label(style='color: white;') }}<br>
                         {{ form.username(size=32, style='width: 300px;') }}<br>
                         {% for error in form.username.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
+                        <span style="color: red; font-style: italic;">{{ error }}</span>
                         {% endfor %}
                     </p>
                     <p>
                         {{ form.password.label(style='color: white;') }}<br>
                         {{ form.password(size=32, style='width: 300px;') }}<br>
                         {% for error in form.password.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
+                        <span style="color: red; font-style: italic;">{{ error }}</span>
                         {% endfor %}
                     </p>
                     <p>{{ form.submit(class="loginButton") }}</p>

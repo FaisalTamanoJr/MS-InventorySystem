@@ -5,65 +5,121 @@
     {% else %}
     <title>MS-InventorySystem</title>
     {% endif %}
+    <style>
+        .container{
+            color: white;
+            margin: 40px;
+            margin-top: 70px;
+        }
+        .name-links{
+            text-decoration: none;
+            color: white;
+            font-style: italic;
+        }
+        .name-links:hover{
+            color: #FF7070;
+        }
+        .button{
+           margin-top: 23px;
+           background-color: #B33A3A;
+           border-radius: 40px;
+           font-style: italic;
+           color: white;
+           padding: 8px 20px;
+           border: none;
+           font-size: 18px;
+           width: 130px;
+           font-weight: bold;
+        }
+        .button:hover{
+            background-color: grey;
+        }
+        .heading1{
+            text-align: center;
+            font-weight: bold;
+            font-style: italic;
+            padding-top: 40px;
+            font-size: 40px;
+            color: white;
+        }
+        .add-buttons{
+            background-color: white;
+            border-radius: 20px;
+            border: none;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        .add-buttons:hover{
+            background-color: grey;
+            color: white;
+        }
+    </style>
 </head>
-<body>
+<body style="background-color: #0d0d0d;">
+<div class="container">
+    <div class="form-control-sm" style="text-align: center;"> <img src="https://4.bp.blogspot.com/-FjLcphEXLSI/WG0AeOhfdbI/AAAAAAAAE1A/jhqkNGX4qD4E93qw0thbHzrB0npLiE5rACLcB/s1600/master%2Bsiomai.png" width="602.88" height="157.44" alt="master siomai logo"></div>
+    <div class="heading1">INVENTORY</div>
 
-<!-- bootstrap for tables design - edit if other design is preferred -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+    <!-- bootstrap for tables design - edit if other design is preferred -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
 
-<!-- dataTables.js, library for advanced table features -->
-<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+    <!-- dataTables.js, library for advanced table features -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
 
-<button type=button id="to-index">Home</button>
-<button id="to-add-product">Add Product</button>
-<button id="to-add-product-type">Add Product Type</button>
+    <button type=button id="to-index" class="button" style="margin-top: 20px; margin-bottom: 50px;">Home</button>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <button id="to-add-product" class="add-buttons" style="margin-right: 30px;">Add Product</button>
+        <button id="to-add-product-type" class="add-buttons">Add Product Type</button>
+    </div>
 
-<script>
-    // Button to redirect to home, add product, and add product-type
-    $("#to-index").on('click', function(){
-        window.location = "{{ url_for('index') }}"
-    })
+    <script>
+        // Button to redirect to home, add product, and add product-type
+        $("#to-index").on('click', function(){
+            window.location = "{{ url_for('index') }}"
+        })
 
-    $("#to-add-product").on('click', function(){
-        window.location = "{{ url_for('add_a_product') }}"
-    })
+        $("#to-add-product").on('click', function(){
+            window.location = "{{ url_for('add_a_product') }}"
+        })
 
-    $("#to-add-product-type").on('click', function(){
-        window.location = "{{ url_for('add_a_product_type') }}"
-    })
-</script>
+        $("#to-add-product-type").on('click', function(){
+            window.location = "{{ url_for('add_a_product_type') }}"
+        })
+    </script>
 
-<!-- Accounts table -->
-<table id="products-table" class="table table-striped">
-    <thead>
-    <tr>
-        <th>Transaction Date and Time</th>
-        <th>Type</th>
-        <th>Price</th>
-        <th>Stocks</th>
-        <th>Last Stock Changes On</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for product in products %}
-    <tr>
-        <td><a href="{{ url_for('product_details', product_id=product.id) }}">{{ product.name }}</a></td>
-        <td>{{ product.product_type.name }}</td>
-        <td>{{ product.get_price() }}</td>
-        <td>{{ product.stock.quantity }}</td>
-        <td>{{ product.stock.get_last_updated() }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
-<script>
-    $(document).ready(function () {
-        $('#products-table').DataTable();
-    });
-</script>
+    <!-- Accounts table -->
+    <table id="products-table" class="table table-striped"  style="text-align: center;">
+        <thead>
+        <tr>
+            <th style="color: white; padding-left: 30px;">TRANSATION DATE & TIME</th>
+            <th style="color: white; padding-left: 30px;">TYPE</th>
+            <th style="color: white; padding-left: 30px;">PRICE</th>
+            <th style="color: white; padding-left: 30px;">STOCKS</th>
+            <th style="color: white; padding-left: 30px;">LAST STOCK CHANGES ON</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+        <tr>
+            <td><a href="{{ url_for('product_details', product_id=product.id) }}" class="name-links">{{ product.name }}</a></td>
+            <td style="color: white;">{{ product.product_type.name }}</td>
+            <td style="color: white;">{{ product.get_price() }}</td>
+            <td style="color: white;">{{ product.stock.quantity }}</td>
+            <td style="color: white;">{{ product.stock.get_last_updated() }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        $(document).ready(function () {
+            $('#products-table').DataTable();
+        });
+    </script>
+</div>
 </body>
 </html>
