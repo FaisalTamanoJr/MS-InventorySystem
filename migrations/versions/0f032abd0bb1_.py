@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 222f1f45b464
+Revision ID: 0f032abd0bb1
 Revises: 
-Create Date: 2024-03-25 14:39:03.680786
+Create Date: 2024-04-04 02:21:21.212114
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '222f1f45b464'
+revision = '0f032abd0bb1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -67,7 +67,7 @@ def upgrade():
     op.create_table('product',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('price', sa.DECIMAL(precision=2), nullable=False),
+    sa.Column('price', sa.DECIMAL(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('product_type_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['product_type_id'], ['product_type.id'], ),
@@ -81,8 +81,11 @@ def upgrade():
 
     op.create_table('transaction',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('total_amount_paid', sa.DECIMAL(precision=2), nullable=False),
+    sa.Column('total_amount_paid', sa.DECIMAL(), nullable=False),
     sa.Column('transaction_date', sa.DateTime(), nullable=False),
+    sa.Column('senior_citizen_name', sa.String(length=255), nullable=True),
+    sa.Column('senior_citizen_id', sa.String(length=255), nullable=True),
+    sa.Column('gcash_ref_no', sa.String(length=255), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('transaction_type_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['transaction_type_id'], ['transaction_type.id'], ),
@@ -97,7 +100,7 @@ def upgrade():
     op.create_table('order',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
-    sa.Column('total_price', sa.DECIMAL(precision=2), nullable=False),
+    sa.Column('total_price', sa.DECIMAL(), nullable=False),
     sa.Column('transaction_id', sa.Integer(), nullable=False),
     sa.Column('product_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['product_id'], ['product.id'], ),

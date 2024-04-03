@@ -95,7 +95,7 @@ class TransactionType(db.Model):
 
 class Transaction(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    total_amount_paid: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL(precision=2))
+    total_amount_paid: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL)
     transaction_date: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
     senior_citizen_name: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255))
     senior_citizen_id: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255))
@@ -141,7 +141,7 @@ class ProductType(db.Model):
 class Product(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(255), unique=True)
-    price: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL(precision=2))
+    price: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL)
 
     # Links to the stock table.
     stock: so.Mapped['Stock'] = so.relationship(back_populates='product', cascade="all, delete-orphan")
@@ -188,7 +188,7 @@ class Stock(db.Model):
 class Order(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     quantity: so.Mapped[int] = so.mapped_column(sa.Integer)
-    total_price: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL(precision=2))
+    total_price: so.Mapped[decimal] = so.mapped_column(sa.DECIMAL)
 
     # Links to the transaction table.
     transaction_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Transaction.id), index=True)
