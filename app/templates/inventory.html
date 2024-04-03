@@ -80,15 +80,15 @@
     <script>
         // Button to redirect to home, add product, and add product-type
         $("#to-index").on('click', function(){
-            window.location = "{{ url_for('index') }}"
+            window.location = "{{ url_for('main.index') }}"
         })
 
         $("#to-add-product").on('click', function(){
-            window.location = "{{ url_for('add_a_product') }}"
+            window.location = "{{ url_for('main.add_a_product') }}"
         })
 
         $("#to-add-product-type").on('click', function(){
-            window.location = "{{ url_for('add_a_product_type') }}"
+            window.location = "{{ url_for('main.add_a_product_type') }}"
         })
     </script>
 
@@ -106,7 +106,7 @@
         <tbody>
         {% for product in products %}
         <tr>
-            <td><a href="{{ url_for('product_details', product_id=product.id) }}" class="name-links">{{ product.name }}</a></td>
+            <td><a href="{{ url_for('main.product_details', product_id=product.id) }}" class="name-links">{{ product.name }}</a></td>
             <td style="color: white;">{{ product.product_type.name }}</td>
             <td style="color: white;">{{ product.get_price() }}</td>
             <td style="color: white;">{{ product.stock.quantity }}</td>

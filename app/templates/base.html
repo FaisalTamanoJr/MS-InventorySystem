@@ -147,8 +147,8 @@
 
                     <ul class="sub-menu">
                         <li><b class="main-sub-menu">SALES</b></li>
-                        <li><a href="{{ url_for('sales_register') }}">Register</a></li>
-                        <li><a href="{{ url_for('sales_report') }}">Sales Report</a></li>
+                        <li><a href="{{ url_for('main.sales_register') }}">Register</a></li>
+                        <li><a href="{{ url_for('main.sales_report') }}">Sales Report</a></li>
                     </ul>
                 </li>
 
@@ -161,7 +161,7 @@
 
                     <ul class="sub-menu">
                         <li><b class="main-sub-menu">INVENTORY</b></li>
-                        <li><a href="{{ url_for('inventory') }}">Overall Inventory</a></li>
+                        <li><a href="{{ url_for('main.inventory') }}">Overall Inventory</a></li>
                     </ul>
                 </li>
 
@@ -172,10 +172,10 @@
                     </div>
                     <ul class="sub-menu">
                         <li><b class="main-sub-menu">MANAGE ACCOUNTS</b></li>
-                        <li><a href="{{ url_for('accounts') }}">All Accounts</a></li>
-                        <li><a href="{{ url_for('accounts_employee') }}">Employees</a></li>
-                        <li><a href="{{ url_for('accounts_admin') }}">Admins</a></li>
-                        <li><a href="{{ url_for('create_an_account') }}">Create an Account</a></li>
+                        <li><a href="{{ url_for('main.accounts') }}">All Accounts</a></li>
+                        <li><a href="{{ url_for('main.accounts_employee') }}">Employees</a></li>
+                        <li><a href="{{ url_for('main.accounts_admin') }}">Admins</a></li>
+                        <li><a href="{{ url_for('main.create_an_account') }}">Create an Account</a></li>
                     </ul>
                 </li>
 
@@ -185,9 +185,9 @@
                 <li>
                     <div>
                         {% if current_user.is_anonymous %}
-                        <b><a href="{{ url_for('login') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-in'></i>Sign in</a></b>
+                        <b><a href="{{ url_for('main.login') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-in'></i>Sign in</a></b>
                         {% else %}
-                        <b><a href="{{ url_for('logout') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-out'></i>Sign out</a></b>
+                        <b><a href="{{ url_for('main.logout') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-out'></i>Sign out</a></b>
                         {% endif %}
                     </div>
                 </li>
@@ -213,16 +213,16 @@
 
                     <ul class="sub-menu" >
                         <li><b class="main-sub-menu">SALES</b></li>
-                        <li><a href="{{ url_for('sales_register') }}" >Register</a></li>
+                        <li><a href="{{ url_for('main.sales_register') }}" >Register</a></li>
                     </ul>
                 </li>
                 <div style="color: white; margin-top: 40px; padding-right: 10px;">----------------------------------------</div>
                 <li>
                     <div>
                         {% if current_user.is_anonymous %}
-                        <b><a href="{{ url_for('login') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-in'></i>Sign in</a></b>
+                        <b><a href="{{ url_for('main.login') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-in'></i>Sign in</a></b>
                         {% else %}
-                        <b><a href="{{ url_for('logout') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-out'></i>Sign out</a></b>
+                        <b><a href="{{ url_for('main.logout') }}" style="color: white; font-size: 17px;"><i class='bx bx-log-out'></i>Sign out</a></b>
                         {% endif %}
                     </div>
                 </li>

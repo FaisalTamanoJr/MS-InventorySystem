@@ -292,7 +292,7 @@
 
         // Send the transaction to the python backend
             var xml = new XMLHttpRequest()
-            xml.open("POST","{{ url_for('process_transaction') }}", true)
+            xml.open("POST","{{ url_for('main.process_transaction') }}", true)
             xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
             xml.send(JSON.stringify(transaction))
 

@@ -14,7 +14,7 @@ migrate = Migrate()
 
 # The flask login extension that allows users to remain signed it after they have logged in.
 login = LoginManager()
-login.login_view = 'login' # Assigns the login page that gets redirected to when a view function is under
+login.login_view = 'main.login' # Assigns the login page that gets redirected to when a view function is under
 # @login_required.
 
 def create_app(config_class=Config):
@@ -25,7 +25,10 @@ def create_app(config_class=Config):
     migrate.init_app(app,db)
     login.init_app(app)
 
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
     return app
 
-from app import helpers, routes, models  # Although it seems odd, the import was placed here to deal with the circular import
+from app import helpers, models  # Although it seems odd, the import was placed here to deal with the circular import
 # issue.

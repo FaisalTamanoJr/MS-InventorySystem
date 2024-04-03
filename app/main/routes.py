@@ -1,10 +1,9 @@
 """This module returns the appropriate webpage given a request/URL."""
 
 from flask import render_template, flash, redirect, url_for, request
-from sqlalchemy import and_
 
-from app import app  # Import the app variable from the app package.
-from app.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
+from app.main import bp  # Import the app variable from the app package.
+from app.main.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app import db
@@ -16,23 +15,23 @@ from decimal import Decimal
 
 
 # The decorators, or the code that starts with "@", are used for linking the URL given as an argument, and the function.
-@app.route('/')
+@bp.route('/')
 @login_required
 def index():
     if db.session.scalars(sa.select(User)).first() is None:  # If there are no existing users, redirect to admin
         # registration page.
-        return redirect(url_for('register_admin'))
+        return redirect(url_for('main.register_admin'))
     else:
-        return redirect(url_for('sales_register'))
+        return redirect(url_for('main.sales_register'))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     if db.session.scalars(sa.select(User)).first() is None:  # If there are no existing users, redirect to admin
         # registration page.
-        return redirect(url_for('register_admin'))
+        return redirect(url_for('main.register_admin'))
     if current_user.is_authenticated:  # Redirect to index if user is signed in already
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():  # If browser receives a POST request
 
@@ -42,7 +41,7 @@ def login():
         if user is None or not user.login.check_password(
                 form.password.data):  # If user doesn't exist or password is wrong.
             flash('Enter a valid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         login_user(user, remember=True)
 
         # Redirects to the next page. If a user opens a @login_required page but was not signed in, it redirects back
@@ -50,21 +49,21 @@ def login():
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':  # The urlsplit is for determining whether the next
             # page url is a relative or absolute path (for security purposes)
-            next_page = url_for('index')
+            next_page = url_for('main.index')
         return redirect(next_page)
 
     return render_template('login.html', form=form)
 
 
-@app.route('/logout')
+@bp.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('main.login'))
 
 
 # Sales
-@app.route('/sales/register')
+@bp.route('/sales/register')
 @login_required
 def sales_register():
     products = db.session.scalars(sa.select(Product)).all()
@@ -116,7 +115,7 @@ def sales_register():
                            total_quantity=total_quantity)
 
 
-@app.route('/sales/register/process-transaction', methods=['POST'])
+@bp.route('/sales/register/process-transaction', methods=['POST'])
 @login_required
 def process_transaction():
     transaction_received = request.get_json(force=True)
@@ -159,7 +158,7 @@ def process_transaction():
         return "success"
 
 
-@app.route('/sales/report')
+@bp.route('/sales/report')
 @login_required
 def sales_report():
     if current_user.role.name != 'admin':
@@ -168,7 +167,7 @@ def sales_report():
     return render_template('sales_report.html', title='Sales Report', transactions=transactions)
 
 
-@app.route('/sales/report/transaction/<transaction_id>')
+@bp.route('/sales/report/transaction/<transaction_id>')
 @login_required
 def transaction(transaction_id):
     if current_user.role.name != 'admin':
@@ -180,7 +179,7 @@ def transaction(transaction_id):
 
 
 # Inventory
-@app.route('/inventory')
+@bp.route('/inventory')
 @login_required
 def inventory():
     if current_user.role.name != 'admin':
@@ -189,12 +188,12 @@ def inventory():
     return render_template('inventory.html', title='Overall Inventory', products=products)
 
 
-@app.route('/inventory/add-a-product', methods=['GET', 'POST'])
+@bp.route('/inventory/add-a-product', methods=['GET', 'POST'])
 @login_required
 def add_a_product():
     # Ensure the one creating an account is an admin, else redirect them to index
     if current_user.role.name != 'admin':
-        return redirect(url_for('inventory'))
+        return redirect(url_for('main.inventory'))
 
     form = AddProductForm()
 
@@ -209,17 +208,17 @@ def add_a_product():
         db.session.commit()
         flash('Product has been Added')
 
-        return redirect(url_for('inventory'))
+        return redirect(url_for('main.inventory'))
 
     return render_template('inventory_add_a_product.html', title='Add a Product', form=form)
 
 
-@app.route('/inventory/add-a-product-type', methods=['GET', 'POST'])
+@bp.route('/inventory/add-a-product-type', methods=['GET', 'POST'])
 @login_required
 def add_a_product_type():
     # Ensure the one creating an account is an admin, else redirect them to index
     if current_user.role.name != 'admin':
-        return redirect(url_for('inventory'))
+        return redirect(url_for('main.inventory'))
 
     form = AddProductTypeForm()
 
@@ -231,16 +230,16 @@ def add_a_product_type():
         db.session.commit()
         flash('Product Type has been Added')
 
-        return redirect(url_for('inventory'))
+        return redirect(url_for('main.inventory'))
 
     return render_template('inventory_add_a_product_type.html', title='Add a Product Type', form=form)
 
 
-@app.route('/product/<product_id>')
+@bp.route('/product/<product_id>')
 @login_required
 def product_details(product_id):
     if current_user.role.name != "admin":
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     product = db.session.scalar(sa.select(Product).where(Product.id == product_id))
 
     if product is None:
@@ -252,11 +251,11 @@ def product_details(product_id):
     return render_template('product.html', title=f"{product.name}", product=product, product_types=product_types)
 
 
-@app.route('/product/<product_id>/changes', methods=['POST'])
+@bp.route('/product/<product_id>/changes', methods=['POST'])
 @login_required
 def product_changes(product_id):
     if current_user.role.name != "admin":
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     changes = request.get_json(force=True)
     product = db.session.scalar(sa.select(Product).where(Product.id == product_id))
 
@@ -286,19 +285,19 @@ def product_changes(product_id):
     return "success"
 
 
-@app.route('/product/<product_id>/delete', methods=['POST', 'GET'])
+@bp.route('/product/<product_id>/delete', methods=['POST', 'GET'])
 @login_required
 def delete_product(product_id):
     if current_user.role.name != "admin":
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     user = db.session.scalar(sa.select(Product).where(Product.id == product_id))
     db.session.delete(user)
     db.session.commit()
-    return redirect(url_for('inventory'))
+    return redirect(url_for('main.inventory'))
 
 
 # Accounts
-@app.route('/accounts')
+@bp.route('/accounts')
 @login_required
 def accounts():
     if current_user.role.name != 'admin':
@@ -307,12 +306,12 @@ def accounts():
     return render_template('accounts.html', title='Accounts', users=users)
 
 
-@app.route('/accounts/create-an-account', methods=['GET', 'POST'])
+@bp.route('/accounts/create-an-account', methods=['GET', 'POST'])
 @login_required
 def create_an_account():
     # Ensure the one creating an account is an admin, else redirect them to index
     if current_user.role.name != 'admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     form = AccountCreationForm()
 
@@ -329,12 +328,12 @@ def create_an_account():
         db.session.commit()
         flash('Account has been Created.')
 
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('create_an_account.html', title='Create an Account', form=form)
 
 
-@app.route('/accounts/employee')
+@bp.route('/accounts/employee')
 @login_required
 def accounts_employee():
     if current_user.role.name != 'admin':
@@ -343,7 +342,7 @@ def accounts_employee():
     return render_template('accounts.html', title='Accounts', users=users)
 
 
-@app.route('/accounts/admin')
+@bp.route('/accounts/admin')
 @login_required
 def accounts_admin():
     if current_user.role.name != 'admin':
@@ -352,11 +351,11 @@ def accounts_admin():
     return render_template('accounts.html', title='Accounts', users=users)
 
 
-@app.route('/account/<user_id>')
+@bp.route('/account/<user_id>')
 @login_required
 def account(user_id):
     if current_user.role.name != "admin":
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     user = db.session.scalar(sa.select(User).where(User.id == user_id))
 
     if user is None:
@@ -368,11 +367,11 @@ def account(user_id):
     return render_template('account.html', title=f"{user.fullname}'s account", user=user, roles=roles)
 
 
-@app.route('/account/<user_id>/changes', methods=['POST'])
+@bp.route('/account/<user_id>/changes', methods=['POST'])
 @login_required
 def account_changes(user_id):
     if current_user.role.name != "admin":
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     changes = request.get_json(force=True)
     user = db.session.scalar(sa.select(User).where(User.id == user_id))
 
@@ -410,18 +409,18 @@ def account_changes(user_id):
     return "success"
 
 
-@app.route('/account/<user_id>/delete', methods=['POST', 'GET'])
+@bp.route('/account/<user_id>/delete', methods=['POST', 'GET'])
 @login_required
 def delete_account(user_id):
     if current_user.role.name != "admin":
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     user = db.session.scalar(sa.select(User).where(User.id == user_id))
     db.session.delete(user)
     db.session.commit()
-    return redirect(url_for('accounts'))
+    return redirect(url_for('main.accounts'))
 
 
-@app.route('/register_admin', methods=['GET', 'POST'])
+@bp.route('/register_admin', methods=['GET', 'POST'])
 def register_admin():
     form = AdminRegistrationForm()
 
@@ -452,10 +451,10 @@ def register_admin():
         db.session.add(transaction_type)
         db.session.commit()
 
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     # If a single user or more exist in the database, prevent them from accessing this page.
     if db.session.scalars(sa.select(User)).first() is not None:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('register_admin.html', title='Admin Registration', form=form)

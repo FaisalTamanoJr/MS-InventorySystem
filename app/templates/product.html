@@ -135,7 +135,7 @@
         </p>
 
         <p><b class="labels">Last Updated:</b> {{ product.stock.get_last_updated() }}</p>
-        <p><b class="labels" style="padding-right: 0px;">Added by:</b> <a href="{{ url_for('account', user_id=product.user.id) }}" class="name-links">{{ product.user.fullname }}</a></p>
+        <p><b class="labels" style="padding-right: 0px;">Added by:</b> <a href="{{ url_for('main.account', user_id=product.user.id) }}" class="name-links">{{ product.user.fullname }}</a></p>
 
         <button id="delete-product" class="button" style="margin-right: 20px;">Delete Product</button>
         <button id="edit-details" class="button2">Edit Details</button>
@@ -164,7 +164,7 @@
 
         if (confirm('Are you sure?')){
             var xml = new XMLHttpRequest()
-            xml.open("POST", "{{ url_for('product_changes', product_id=product.id) }}", true)
+            xml.open("POST", "{{ url_for('main.product_changes', product_id=product.id) }}", true)
             xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
             // Send changes
@@ -221,7 +221,7 @@
 
     $("#delete-product").on('click', function(){
         if (confirm("Are you sure?")){
-            window.location = "{{ url_for('delete_product', product_id=product.id) }}"
+            window.location = "{{ url_for('main.delete_product', product_id=product.id) }}"
         }else{
             return
         }

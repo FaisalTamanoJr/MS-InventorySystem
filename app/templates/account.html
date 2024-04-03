@@ -155,7 +155,7 @@
 
         if (confirm('Are you sure?')){
             var xml = new XMLHttpRequest()
-            xml.open("POST", "{{ url_for('account_changes', user_id=user.id) }}", true)
+            xml.open("POST", "{{ url_for('main.account_changes', user_id=user.id) }}", true)
             xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
             // Send changes
@@ -220,7 +220,7 @@
 
     $("#delete-account").on('click', function(){
         if (confirm("Are you sure?")){
-            window.location = "{{ url_for('delete_account', user_id=user.id) }}"
+            window.location = "{{ url_for('main.delete_account', user_id=user.id) }}"
         }else{
             return
         }
