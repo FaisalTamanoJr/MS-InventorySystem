@@ -1,8 +1,9 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from app import app, db
+from app import create_app, db
 from app.models import Role, User, Login, TransactionType, Transaction, ProductType, Product, Stock, Order
 
+app = create_app()
 
 # Registers the items to the python interpreter session, making it not necessary to import everything in python
 # interpreter manually (when ran using the flask shell command).
