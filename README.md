@@ -1,4 +1,4 @@
-## Steps to run the program locally: 
+## Steps to run the program locally
 1. Set up a virtual environment and open the project directory
     - A recommended way of doing this as a beginner is through [PyCharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html).
 3. Run `pip install -r requirements` in the terminal after you have entered the created Python virtual environment.
