@@ -134,10 +134,9 @@
                 {% else %}
                 <div><b>Admin: {{ current_user.fullname }}</b></div>
                 {% endif %}
-                {% if current_user.role.name == "admin" %}
             </div>
-            <img src="https://clipground.com/images/thin-white-line-png-3.png" alt="line divider" style="height: 30px; width: 300px; margin-top: 0px; margin-left: 0px;">
             {% if current_user.role.name == "admin" %}
+            <img src="https://clipground.com/images/thin-white-line-png-3.png" alt="line divider" style="height: 30px; width: 300px; margin-top: 0px; margin-left: 0px;">
             <ul class = "nav-links">
                 <li>
                     <div class="main-menu" style="margin-top: 30px;">
@@ -192,17 +191,7 @@
                     </div>
                 </li>
             </ul>
-            {% endif %}
-
             {% else %}
-            <style>
-                .right-section{
-                    width: 1390px;
-                    z-index: -1;
-                    position: relative;
-                    top: -1200px;"
-                }
-            </style>
             <img src="https://clipground.com/images/thin-white-line-png-3.png" alt="line divider" style="height: 30px; width: 300px; margin-top: 0px; margin-left: 0px;">
             <ul class="nav-links" style="height: 1000px; margin-right: 0px;">
                 <li>

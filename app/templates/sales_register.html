@@ -23,7 +23,7 @@
         overflow-x: hidden;
     }
 
-    .register .heading1{
+    .heading1{
         position: relative;
         padding-left: 80px;
         font-weight: bold;
@@ -32,7 +32,7 @@
         font-size: 60px;
         color: #A60000;
     }
-    .register .components{
+    .components{
         position: relative;
         text-align: center;
         background: #F7E4E4;
@@ -41,39 +41,65 @@
         margin-right: 80px;
         border-radius: 30px;
     }
+
     .button{
+       background-color: #B33A3A;
+       border-radius: 100px;
+       font-style: italic;
+       color: white;
+       border: none;
+       width: 157px;
+       padding: 8px 20px;
+    }
+    .button:hover{
+        background-color: grey;
+    }
+    .button2{
        background-color: #008E0E;
        border-radius: 100px;
        font-style: italic;
        color: white;
        border: none;
-       width: 100px;
+       width: 157px;
+       padding: 8px 20px;
     }
-    .button:hover{
+    .button2:hover{
         background-color: grey;
     }
     .input{
         border-radius: 30px;
+        padding-left: 10px;
+        border: none;
+        width: 226px;
+        height: 30px;
+    }
+    .discount{
+        background-color: rgba(0, 0, 0, 0);
+        border:none;
+        font-weight: bold;
+    }
+    .discount:hover{
+        color: #1e90ff;
+        font-style: italic;
     }
 </style>
 <div class="register">
     <h1 class="heading1">Order</h1>
-    <div class="components" style="font-size: 30px;">
-        <label>ITEM </label>
+    <div class="components" style="font-size: 20px;">
+        <label style="font-weight: bold;">ITEM </label>
         <select id="order-product" class="input">
             <option data-price=""></option>
             {% for product in products %}
             <option data-price="{{ product.price }}">{{ product.name }}</option>
             {% endfor %}
         </select>
-        <label style="padding-left: 50px;">QUANTITY </label><input type="text" id="order-quantity" class="input">
+        <label style="padding-left: 50px; padding-right: 10px; font-weight: bold;">QUANTITY </label><input type="text" id="order-quantity" class="input">
         <button class="button" id="add-order" style="margin-left: 50px;"><b>+</b></button>
     </div>
 
     <h1 class="heading1">Transaction</h1>
-
-    <div class="components">
-        <label>Method of Payment</label><br>
+    <div class="components" style="font-size: 20px;">
+        <label style="font-size: 25px; font-weight: bold;">Method of Payment</label><br>
         <select id="payment-method" class="input">
             <option></option>
             {% for payment_method in payment_methods %}
@@ -81,67 +107,67 @@
             {% endfor %}
         </select>
 
-        <br><label class="gcash-ref hidden"><p>Reference no.</p></label>
-        <input type="text" class="gcash-ref hidden input" id="gcash-ref-no"><br>
+        <br><label class="gcash-ref hidden" style="padding-top: 10px;">Reference no.</label><br>
+        <input type="text" class="gcash-ref hidden input" id="gcash-ref-no" style="margin-bottom: 25px;"><br>
 
-        <label><b>Apply Senior Discount?</b></label><br>
-        <label>Senior Citizen Name</label>
-        <p><input type="text" id="senior-name" class="input"></p>
-        <label>ID No.</label>
-        <p><input type="text" id="senior-id" class="input"></p>
+        <button id="senior-discount" class="discount">Apply Senior Discount?</button> <br>
+        <label id="senior-name-label" class="hidden" style="padding-top: 10px;">Senior Citizen Name</label>
+        <p><input type="text" id="senior-name" class="hidden input"></p>
+        <label id="senior-id-label" class="hidden">ID No.</label>
+        <p><input type="text" id="senior-id" class="hidden input"></p>
         <h2 style="color: white;">------------------------------------------------------------------------------------------</h2>
             <table>
             <thead>
             <tr>
                 <th scope="col"></td>
-                <th scope="col">Item</td>
-                <th scope="col">No. of Orders</td>
-                <th scope="col">Amount</td>
+                <th scope="col" style="width: 402px; height: 50px;">Item</td>
+                <th scope="col" style="width: 402px;">Quantity</td>
+                <th scope="col" style="width: 402px;">Amount</td>
             </tr>
             </thead>
             <tbody id="transactions-table">
             </tbody>
             <tr>
                 <td></td>
-                <td><b>TOTAL = </b></td>
+                <td style="width: 402px; height: 50px;"><b>TOTAL = </b></td>
                 <td id="total-quantity"></td>
                 <td id="total-amount"></td>
             </tr>
         </table><br>
 
-        <button id="delete-products" class="button">Delete</button>
-        <button id="process-transactions" class="button">Process</button>
+        <button id="delete-products" class="button" style="margin-right:50px;">Delete</button>
+        <button id="process-transactions" class="button2">Process</button>
     </div>
 
     <h1 class="heading1">Processed Transactions</h1>
-    <div class="components" style="margin-bottom: 40px;">
-        <p id="date-and-time"></p>
+    <p id="date-and-time" style="padding-left: 80px; font-size: 25px; font-style:italic; margin-bottom: 0px;"></p>
+    <div class="components" style="font-size: 20px; margin-bottom: 40px;">
         <table id="p_transactions_table">
             <thead class="p_transactions">
             <tr class="p_transactions">
-                <th scope="col">Time</td>
-                <th scope="col">Item</td>
-                <th scope="col">MOP</td>
-                <th scope="col">No. of Orders</td>
-                <th scope="col">Amount</td>
+                <th scope="col" style="width: 226.597px; height: 50px;">Time</td>
+                <th scope="col" style="width: 226.597px;">Item</td>
+                <th scope="col" style="width: 226.597px;">MOP</td>
+                <th scope="col" style="width: 226.597px;">Quantity</td>
+                <th scope="col" style="width: 226.597px;">Amount</td>
             </tr>
             </thead>
-            <tbody class="p_transactions" id="p_transactions_body">
+            <tbody class="p_transactions" id="p_transactions_body" style="height: 700px;">
                 {% for transaction in processed_transactions %}
                     {% for order in transaction.orders %}
                     <tr>
-                        <td>{{ transaction.time }}</td>
-                        <td>{{ order.product }}</td>
-                        <td>{{ transaction.transaction_type }}</td>
-                        <td>{{ order.quantity }}</td>
-                        <td>{{ order.total_price }}</td>
+                        <td style="width: 226.597px; height: 50px;">{{ transaction.time }}</td>
+                        <td style="width: 226.597px; height: 50px;">{{ order.product }}</td>
+                        <td style="width: 226.597px; height: 50px;">{{ transaction.transaction_type }}</td>
+                        <td style="width: 226.597px; height: 50px;">{{ order.quantity }}</td>
+                        <td style="width: 226.597px; height: 50px;">{{ order.total_price }}</td>
                     </tr>
                     {% endfor %}
                 {% endfor %}
                 <tr>
                     <td></td>
                     <td></td>
-                    <td><b>TOTAL = </b></td>
+                    <td style="height: 50px;"><b>TOTAL = </b></td>
                     <td>{{ total_quantity }}</td>
                     <td>{{ total_paid }}</td>
                 </tr>
@@ -205,6 +231,13 @@
                 }
             }
             compute_total()
+        })
+
+        $('#senior-discount').on('click', function(){
+            $('#senior-name-label').removeClass('hidden')
+            $('#senior-name').removeClass('hidden')
+            $('#senior-id-label').removeClass('hidden')
+            $('#senior-id').removeClass('hidden')
         })
 
         $('#process-transactions').on('click', function(){

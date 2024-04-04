@@ -2,22 +2,6 @@
 
 {% block content %}
 
-<h2>Transaction Details</h2>
-<p><b>Transaction Date:</b> {{ transaction.get_date_and_time() }}</p>
-<p><b>Total Amount Paid:</b> {{ transaction.get_total_amount_paid() }}</p>
-<p><b>Recorded By:</b><a href="{{ url_for('main.account', user_id=transaction.user_id) }}"> {{ transaction.user.fullname }}</a></p>
-
-{% if transaction.senior_citizen_name %}
-<h2>Senior Citizen Discount Details</h2>
-<p><b>Senior Citizen Name:</b> {{ transaction.senior_citizen_name }}</p>
-<p><b>Senior Citizen ID:</b> {{ transaction.senior_citizen_id }}</p>
-{% endif %}
-
-{% if transaction.gcash_ref_no %}
-<h2>GCash Transaction Details</h2>
-<p><b>GCash Reference Number:</b> {{ transaction.gcash_ref_no }}</p>
-{% endif %}
-
 <style>
     #orders_table {
         width: 100%;
@@ -33,30 +17,96 @@
         overflow-y: auto;
         overflow-x: hidden;
     }
+
+    .heading1{
+        position: relative;
+        text-align: center;
+        font-weight: bold;
+        font-style: italic;
+        padding-top: 40px;
+        font-size: 50px;
+    }
+    .components{
+        position: relative;
+        background: #F7E4E4;
+        padding: 40px 60px;
+        margin-left: 30px;
+        margin-right: 80px;
+        border-radius: 30px;
+        font-size: 20px;
+    }
+    .name-links{
+        text-decoration: none;
+        color: #B33A3A;
+        font-style: italic;
+        padding: 10px;
+        font-weight: bold;
+    }
+    .name-links:hover{
+        background-color: grey;
+        padding: 10px;
+        border-radius: 100px;
+        color: white;
+    }
+    .name-links2{
+        text-decoration: none;
+        color: #B33A3A;
+        font-style: italic;
+    }
+    .name-links2:hover{
+        color: grey;
+    }
 </style>
 
-<h2>Orders</h2>
-<table id="orders_table">
-    <thead class="orders">
-    <tr class="orders">
-        <th scope="col">Item</td>
-        <th scope="col">No. of Orders</td>
-        <th scope="col">Total Price</td>
-    </tr>
-    </thead>
-    <tbody class="orders" id="orders_body">
-    {% for order in orders %}
-    <tr>
-        {% if order.product %}
-        <td><a href="{{ url_for('main.product_details', product_id=order.product_id) }}">{{ order.product.name }}</a></td>
-        {% else %}
-        <td>Product Deleted</td>
-        {% endif %}
-        <td>{{ order.quantity }}</td>
-        <td>{{ order.get_total_price() }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <h2 class="heading1">Transaction Details</h2>
+    <div class="components">
+        <p><b style="padding-right: 10px;">Transaction Date:</b> {{ transaction.get_date_and_time() }}</p>
+        <p><b style="padding-right: 10px;">Total Amount Paid:</b> {{ transaction.get_total_amount_paid() }}</p>
+        <p><b>Recorded By:</b><a href="{{ url_for('main.account', user_id=transaction.user_id) }}" class="name-links"> {{ transaction.user.fullname }}</a></p>
+    </div>
+
+    {% if transaction.senior_citizen_name %}
+    <h2 class="heading1">Senior Citizen Discount Details</h2>
+    <div class="components">
+        <p><b style="padding-right: 10px;">Senior Citizen Name:</b> {{ transaction.senior_citizen_name }}</p>
+        <p><b style="padding-right: 10px;">Senior Citizen ID:</b> {{ transaction.senior_citizen_id }}</p>
+    </div>
+
+    {% endif %}
+
+    {% if transaction.gcash_ref_no %}
+    <h2 class="heading1">GCash Transaction Details</h2>
+    <div class="components">
+        <p><b style="padding-right: 10px;">GCash Reference Number:</b> {{ transaction.gcash_ref_no }}</p>
+    </div>
+    {% endif %}
+
+    <h2 class="heading1">Orders</h2>
+    <div class="components" style="text-align: center; margin-bottom: 40px;">
+        <table id="orders_table">
+            <thead class="orders">
+            <tr class="orders">
+                <th scope="col" style="width: 402px; height: 50px;">Item</td>
+                <th scope="col" style="width: 402px;">Quantity</td>
+                <th scope="col" style="width: 402px;">Total Price</td>
+            </tr>
+            </thead>
+            <tbody class="orders" id="orders_body">
+            {% for order in orders %}
+            <tr>
+                {% if order.product %}
+                <td style="width: 402px; height: 50px;"><a href="{{ url_for('main.product_details', product_id=order.product_id) }}" class="name-links2">{{ order.product.name }}</a></td>
+                {% else %}
+                <td style="width: 402px; height: 50px;">Product Deleted</td>
+                {% endif %}
+                <td style="width: 402px; height: 50px;">{{ order.quantity }}</td>
+                <td style="width: 402px; height: 50px;">{{ order.get_total_price() }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}
