@@ -35,6 +35,13 @@
             <div class="row" style="margin-top: 20px; margin-left: 37.5%;">
                 <form action="" method="post" novalidate>
                     {{ form.hidden_tag() }}
+                    {% with messages = get_flashed_messages(category_filter=["wrong_login_details"]) %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <span style="color: red; font-style: italic;">{{ message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
                     <p>
                         {{ form.username.label(style='color: white;') }}<br>
                         {{ form.username(size=32, style='width: 300px;') }}<br>

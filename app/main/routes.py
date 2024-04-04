@@ -1,6 +1,6 @@
 """This module returns the appropriate webpage given a request/URL."""
 
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, flash
 
 from app.main import bp  # Import the app variable from the app package.
 from app.main.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
@@ -10,7 +10,7 @@ from app import db
 from app.models import User, Login, Role, ProductType, Product, Stock, TransactionType, Transaction, Order
 from urllib.parse import urlsplit
 from datetime import datetime, timezone
-from app.helpers import convert_to_local_datetime, truncate
+from app.helpers import convert_to_local_datetime, truncate, isfloat
 from decimal import Decimal
 
 
@@ -40,6 +40,7 @@ def login():
         # provided username in the database
         if user is None or not user.login.check_password(
                 form.password.data):  # If user doesn't exist or password is wrong.
+            flash('Wrong Username or Password', 'wrong_login_details')
             return redirect(url_for('main.login'))
         login_user(user, remember=True)
 
@@ -265,9 +266,10 @@ def product_changes(product_id):
     if changes["type"] != "":
         product.product_type = db.session.scalar(sa.select(ProductType).where(ProductType.name == changes["type"]))
 
-    if changes["price"].isdecimal():
-        price = Decimal(changes["price"])
-        product.price = price
+    if isfloat(changes["price"]):
+        if float(changes["price"]) >= 0:
+            price = float(changes["price"])
+            product.price = price
 
     if changes["stock"].isnumeric():
         new_stock = truncate(float(changes["stock"]), 0)

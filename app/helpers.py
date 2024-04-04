@@ -18,3 +18,10 @@ def convert_to_local_datetime(date, format="%d %B %Y"):
 # Trims a given number without rounding it off
 def truncate(f, n):
     return math.floor(f * 10 ** n) / 10 ** n
+
+def isfloat(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
