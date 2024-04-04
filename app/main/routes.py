@@ -1,6 +1,6 @@
 """This module returns the appropriate webpage given a request/URL."""
 
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, redirect, url_for, request
 
 from app.main import bp  # Import the app variable from the app package.
 from app.main.forms import LoginForm, AdminRegistrationForm, AccountCreationForm, AddProductForm, AddProductTypeForm
@@ -40,7 +40,6 @@ def login():
         # provided username in the database
         if user is None or not user.login.check_password(
                 form.password.data):  # If user doesn't exist or password is wrong.
-            flash('Enter a valid username or password')
             return redirect(url_for('main.login'))
         login_user(user, remember=True)
 
@@ -154,7 +153,6 @@ def process_transaction():
 
         # Submit to the database
         db.session.commit()
-        flash('Transaction processed')
         return "success"
 
 
@@ -206,7 +204,6 @@ def add_a_product():
         db.session.add(product)
         db.session.add(stock)
         db.session.commit()
-        flash('Product has been Added')
 
         return redirect(url_for('main.inventory'))
 
@@ -228,7 +225,6 @@ def add_a_product_type():
         product_type = ProductType(name=form.name.data)
         db.session.add(product_type)
         db.session.commit()
-        flash('Product Type has been Added')
 
         return redirect(url_for('main.inventory'))
 
@@ -281,7 +277,6 @@ def product_changes(product_id):
             old_stock.last_updated = datetime.now(timezone.utc)
 
     db.session.commit()
-    flash('Product detail changes')
     return "success"
 
 
@@ -326,7 +321,6 @@ def create_an_account():
         db.session.add(user)
         db.session.add(account_login)
         db.session.commit()
-        flash('Account has been Created.')
 
         return redirect(url_for('main.index'))
 
@@ -405,7 +399,6 @@ def account_changes(user_id):
         user.birthday = datetime.strptime(changes["birthday"], "%Y-%m-%d")
 
     db.session.commit()
-    flash('Account detail changes')
     return "success"
 
 
@@ -436,7 +429,6 @@ def register_admin():
         db.session.add(user)
         db.session.add(account_login)
         db.session.commit()
-        flash('Admin Account has been Created.')
 
         # Create the employee role in the database
         role = Role(name='employee')
